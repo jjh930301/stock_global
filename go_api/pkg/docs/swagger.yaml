@@ -1,0 +1,22 @@
+info:
+  contact: {}
+paths:
+  /ticker:
+    get:
+      consumes:
+      - application/json
+      description: test
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 패키지 테스트
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
