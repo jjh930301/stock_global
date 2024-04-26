@@ -17,17 +17,17 @@ services:
       - ./go_api:/app
       - /tmp/mysqld:/run/mysqld
     depends_on:
-      - mysql
-  
-  mysql:
+      - db
+
+  db:
     platform: linux/amd64 # m1
     image: "mysql:8.0.28"
     logging:
       driver: none
     restart: always
-    container_name: mysql
+    container_name: db
     ports:
-      - "3306:3306"
+      - "3307:3306"
     env_file:
       - ./.env
     volumes:

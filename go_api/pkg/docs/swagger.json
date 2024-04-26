@@ -13,7 +13,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "패키지 테스트",
+                "summary": "ticker test",
                 "responses": {
                     "200": {
                         "description": "ok",

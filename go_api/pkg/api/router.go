@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,6 @@ func Router() *gin.Engine {
 			SkipPaths: []string{"/health/check"},
 		}))
 	}
-	fmt.Println("swagger test")
 	ticker := r.Group("/ticker")
 	{
 		ticker.GET(Default, tickerRouter.GetTickers)

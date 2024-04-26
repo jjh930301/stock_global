@@ -13,7 +13,7 @@ paths:
           description: ok
           schema:
             type: string
-      summary: 패키지 테스트
+      summary: ticker test
 securityDefinitions:
   BearerAuth:
     in: header
