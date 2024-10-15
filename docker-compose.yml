@@ -1,33 +1,33 @@
 version: "3"
 services:
-  goapi:
-    build:
-      context: "./go_api"
-      dockerfile: Dockerfile
-      args:
-        - GITACCOUNT=${GIT_ACCOUNT}
-        - GITTOKEN=${GIT_TOKEN}
-    container_name: goapi
-    restart: unless-stopped
-    ports:
-      - 3030:3030
-    env_file:
-      - ./.env
-    volumes:
-      - ./go_api:/app
-      - /tmp/mysqld:/run/mysqld
-    depends_on:
-      - db
+  # goapi:
+  #   build:
+  #     context: "./go_api"
+  #     dockerfile: Dockerfile
+  #     args:
+  #       - GITACCOUNT=${GIT_ACCOUNT}
+  #       - GITTOKEN=${GIT_TOKEN}
+  #   container_name: goapi
+  #   restart: unless-stopped
+  #   ports:
+  #     - 3030:3030
+  #   env_file:
+  #     - ./.env
+  #   volumes:
+  #     - ./go_api:/app
+  #     - /tmp/mysqld:/run/mysqld
+  #   depends_on:
+  #     - db
 
-  db:
+  stock:
     platform: linux/amd64 # m1
     image: "mysql:8.0.28"
     logging:
       driver: none
     restart: always
-    container_name: db
+    container_name: stock
     ports:
-      - "3307:3306"
+      - "3310:3306"
     env_file:
       - ./.env
     volumes:
