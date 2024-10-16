@@ -38,6 +38,6 @@ func main() {
 	docs.SwaggerInfo.Description = `
 		Use Bearer Token
 	`
-	r.Run(":3030")
+	r.Run(":8000")
 
 }

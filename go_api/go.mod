@@ -3,7 +3,6 @@ module github.com/jjh930301/needsss_global
 go 1.20
 
 require (
-	github.com/clebi/yfinance v0.0.0-20170430144211-140800e59f10
 	github.com/gin-gonic/gin v1.9.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
@@ -47,7 +46,7 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.18.0 // indirect
-	golang.org/x/net v0.20.0 // indirect
+	golang.org/x/net v0.20.0
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect

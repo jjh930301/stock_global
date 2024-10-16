@@ -6,6 +6,36 @@ paths:
       consumes:
       - application/json
       description: test
+      parameters:
+      - description: page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: size
+        in: query
+        name: size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: ticker test
+  /ticker/chart/{symbol}:
+    get:
+      consumes:
+      - application/json
+      description: test
+      parameters:
+      - description: page
+        in: path
+        name: symbol
+        required: true
+        type: string
       produces:
       - application/json
       responses:
