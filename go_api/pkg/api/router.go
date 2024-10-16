@@ -1,6 +1,8 @@
 package api
 
 import (
+	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -14,9 +16,15 @@ func Router() *gin.Engine {
 			SkipPaths: []string{"/health/check"},
 		}))
 	}
+	r.GET("/healthcheck", func(c *gin.Context) {
+		clientIP := c.ClientIP()
+		fmt.Println(clientIP)
+		c.JSON(http.StatusOK, gin.H{"ip": clientIP})
+	})
 	ticker := r.Group("/ticker")
 	{
 		ticker.GET(Default, tickerRouter.GetTickers)
+		ticker.GET(TickerChart, tickerRouter.GetTickerChart)
 	}
 
 	return r

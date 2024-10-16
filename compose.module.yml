@@ -1,0 +1,18 @@
+version: "3"
+services:
+  goapi:
+    build:
+      context: "./go_api"
+      dockerfile: Dockerfile
+      args:
+        - GITACCOUNT=${GIT_ACCOUNT}
+        - GITTOKEN=${GIT_TOKEN}
+    container_name: goapi
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env
+    volumes:
+      - ./go_api:/app
+      - /tmp/mysqld:/run/mysqld

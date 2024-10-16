@@ -1,0 +1,22 @@
+version: "3"
+services:
+  stock:
+    platform: linux/amd64 # m1
+    image: "mysql:8.0.33"
+    logging:
+      driver: none
+    restart: always
+    container_name: stock
+    ports:
+      - "3310:3306"
+    env_file:
+      - ./.env
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      - ./mysql/data:/var/lib//mysql
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d
+    cap_add:
+      - SYS_NICE
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
