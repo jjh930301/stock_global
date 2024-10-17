@@ -10,7 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jjh930301/needsss_common/res"
 	"github.com/jjh930301/needsss_global/pkg/constant"
-	"github.com/jjh930301/needsss_global/pkg/model"
+
+	"github.com/jjh930301/needsss_global/pkg/structs"
 	"golang.org/x/net/proxy"
 )
 
@@ -36,8 +37,8 @@ func GetTickers(c *gin.Context) {
 		res.BadRequest(c, "required size", 400)
 		return
 	}
-
 	url := fmt.Sprintf(constant.TickerUri, page, size)
+	// url := fmt.Sprintf("https://api.needsss.com/api1/interest?page=%d&ㅋㅋoffset=%d", page, size)
 	dialer, err := proxy.SOCKS5("tcp", constant.TorProxy, nil, proxy.Direct)
 	if err != nil {
 		log.Fatalf("setting tor proxy is failure%v", err)
@@ -55,8 +56,10 @@ func GetTickers(c *gin.Context) {
 		return
 	}
 	defer resp.Body.Close()
-	var stockResponse model.StockResponse
+	var stockResponse structs.StockResponse
+	// var stockResponse json.RawMessage
 	if err := json.NewDecoder(resp.Body).Decode(&stockResponse); err != nil {
+		fmt.Println(err)
 		res.ServerError(c)
 		return
 	}

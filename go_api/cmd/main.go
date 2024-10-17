@@ -7,6 +7,7 @@ import (
 	api "github.com/jjh930301/needsss_global/pkg/api"
 	"github.com/jjh930301/needsss_global/pkg/db"
 	"github.com/jjh930301/needsss_global/pkg/docs"
+	"github.com/jjh930301/needsss_global/pkg/models"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	// _ "github.com/swaggo/gin-swagger/example/basic/docs"
@@ -22,13 +23,20 @@ func main() {
 	} else {
 		user = os.Getenv("MYSQL_USER")
 	}
-	database.InitDb(
+	db.Database = database.InitDb(
 		db.Database,
 		user,
 		os.Getenv("MYSQL_ROOT_PASSWORD"),
 		os.Getenv("MYSQL_HOST"),
 		os.Getenv("MYSQL_DATABASE"),
 	)
+	// if os.Getenv("ENV") == "local" {
+	db.Database.AutoMigrate(
+		&models.TickerModel{},
+	)
+	// }
+	// s := cron.GoCron()
+	// s.StartAsync()
 	r := api.Router()
 
 	// 127.0.0.1:7070/docs/index.html
