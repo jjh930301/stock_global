@@ -40,7 +40,7 @@ type StockInfo struct {
 	CurrencyType           CurrencyInfo       `json:"currencyType"`
 	Dividend               string             `json:"dividend"`
 	DividendPayAt          time.Time          `json:"dividendPayAt"`
-	TradeStopType          TradeStopInfo      `json:"tradeStopType"`
+	TradeStopType          *TradeStopInfo     `json:"tradeStopType"`
 	EndUrl                 string             `json:"endUrl"`
 	DelayTime              int                `json:"delayTime"`
 	DelayTimeName          string             `json:"delayTimeName"`

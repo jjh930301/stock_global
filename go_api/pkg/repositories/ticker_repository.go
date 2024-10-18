@@ -13,7 +13,13 @@ import (
 
 type TickerRepository struct{}
 
-func (t TickerRepository) BulkInsert(stocks []structs.StockInfo) error {
+func (t TickerRepository) FindAll() []models.TickerModel {
+	var tickers []models.TickerModel
+	db.Database.Model(&models.TickerModel{}).Find(&tickers)
+	return tickers
+}
+
+func (t TickerRepository) BulkDuplicateKeyInsert(stocks []structs.StockInfo) error {
 	var tickers []models.TickerModel
 	for _, stock := range stocks {
 		value := strings.ReplaceAll(stock.MarketValue, ",", "")
@@ -33,6 +39,11 @@ func (t TickerRepository) BulkInsert(stocks []structs.StockInfo) error {
 			ticker.EndTime = stock.StockExchangeType.EndTime
 			ticker.NationCode = stock.StockExchangeType.NationCode
 			ticker.MarKetType = stock.StockExchangeType.Name
+		}
+		if stock.TradeStopType != nil {
+			ticker.StopCode = stock.TradeStopType.Code
+			ticker.StopName = stock.TradeStopType.Name
+			ticker.StopText = stock.TradeStopType.Text
 		}
 		tickers = append(tickers, ticker)
 	}

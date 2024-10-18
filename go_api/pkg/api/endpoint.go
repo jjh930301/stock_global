@@ -1,7 +1,7 @@
 package api
 
 const (
-	Default = "/"
+	Default     = "/"
 	HealthCheck = "/healthcheck"
-	TickerChart = "/chart/:symbol"
+	TickerChart = "/chart/"
 )
