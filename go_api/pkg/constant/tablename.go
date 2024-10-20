@@ -1,5 +1,6 @@
 package constant
 
 const (
-	Ticker = "tickers"
+	Ticker    = "tickers"
+	DayCandle = "day_candles"
 )

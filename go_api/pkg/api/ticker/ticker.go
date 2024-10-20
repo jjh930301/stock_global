@@ -3,16 +3,17 @@ package ticker
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
+	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jjh930301/needsss_common/res"
 	"github.com/jjh930301/needsss_global/pkg/constant"
+	"github.com/jjh930301/needsss_global/pkg/models"
 	"github.com/jjh930301/needsss_global/pkg/repositories"
+	"github.com/jjh930301/needsss_global/pkg/utils"
 
 	"github.com/jjh930301/needsss_global/pkg/structs"
-	"golang.org/x/net/proxy"
 )
 
 const firstPage = 1
@@ -42,34 +43,24 @@ func GetTickers(c *gin.Context) {
 
 func getTickerAndInsert(page int) int {
 	url := fmt.Sprintf(constant.TickerUri, page, size)
-	// url := fmt.Sprintf("https://api.needsss.com/api1/interest?page=%d&ㅋㅋoffset=%d", page, size)
-	dialer, err := proxy.SOCKS5("tcp", constant.TorProxy, nil, proxy.Direct)
-	if err != nil {
-		log.Fatalf("setting tor proxy is failure%v", err)
-	}
-	transport := &http.Transport{
-		Dial: dialer.Dial,
-	}
 
-	client := &http.Client{
-		Transport: transport,
-	}
+	client := utils.TorClient()
 	resp, err := client.Get(url)
 	if err != nil {
 		fmt.Println("cannot get ticker list")
 	}
 	defer resp.Body.Close()
 
-	var stockResponse structs.StockResponse
-	// var stockResponse json.RawMessage
-	if err := json.NewDecoder(resp.Body).Decode(&stockResponse); err != nil {
+	var stockRes structs.StockResponse
+	// var stockRes json.RawMessage
+	if err := json.NewDecoder(resp.Body).Decode(&stockRes); err != nil {
 		fmt.Println(err)
 	}
-	err = repositories.TickerRepository{}.BulkDuplicateKeyInsert(stockResponse.Stocks)
+	err = repositories.TickerRepository{}.BulkDuplicateKeyInsert(stockRes.Stocks)
 	if err != nil {
 		fmt.Println(err)
 	}
-	return stockResponse.TotalCount / size
+	return stockRes.TotalCount / size
 }
 
 // @Summary	ticker test
@@ -81,10 +72,50 @@ func getTickerAndInsert(page int) int {
 func GetTickerChart(c *gin.Context) {
 	// https://api.stock.naver.com/chart/foreign/item/NFLX.O/day?&stockExchangeType=NASDAQ&startDateTime=20240101&endDateTime=20240104
 	tickers := repositories.TickerRepository{}.FindAll()
+	batchSize := 500
+
+	for i := 0; i < len(tickers); i += batchSize {
+		end := i + batchSize
+		if end > len(tickers) {
+			end = len(tickers)
+		}
+
+		batch := tickers[i:end]
+
+		var innerWg sync.WaitGroup
+		for _, ticker := range batch {
+			innerWg.Add(1)
+			go func(t models.TickerModel) {
+				defer innerWg.Done()
+				getTickerChartsAndInsert(t.Symbol, t.ReutersCode)
+			}(ticker)
+		}
+		innerWg.Wait()
+	}
+
 	res.Ok(
 		c,
 		"message",
-		tickers,
+		gin.H{"result": true},
 		200,
 	)
+}
+
+func getTickerChartsAndInsert(ticker string, reuterCode string) {
+	// client := utils.TorClient()
+	before, _ := time.Parse("20060102", "20141019")
+	now := time.Now().Format("20060102")
+	url := fmt.Sprintf(constant.TickerChartUri, reuterCode, before.Format("20060102"), now)
+	client := utils.TorClient()
+	resp, err := client.Get(url)
+	if err != nil {
+		fmt.Println("cannot get ticker list")
+	}
+	defer resp.Body.Close()
+	var dayCandleRes []structs.CandleResponse
+	if err := json.NewDecoder(resp.Body).Decode(&dayCandleRes); err != nil {
+		fmt.Println(err)
+	}
+
+	repositories.DayCandleRepository{}.BulkDuplicateKeyInsert(ticker, dayCandleRes)
 }

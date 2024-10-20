@@ -23,6 +23,7 @@ func main() {
 	} else {
 		user = os.Getenv("MYSQL_USER")
 	}
+
 	db.Database = database.InitDb(
 		db.Database,
 		user,
@@ -30,9 +31,17 @@ func main() {
 		os.Getenv("MYSQL_HOST"),
 		os.Getenv("MYSQL_DATABASE"),
 	)
+	conn, err := db.Database.DB()
+	if err != nil {
+		panic(err)
+	}
+	conn.SetMaxIdleConns(500)
+	conn.SetMaxOpenConns(500)
+
 	// if os.Getenv("ENV") == "local" {
 	db.Database.AutoMigrate(
 		&models.TickerModel{},
+		&models.DayCandleModel{},
 	)
 	// }
 	// s := cron.GoCron()

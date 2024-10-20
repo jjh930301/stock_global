@@ -23,6 +23,7 @@ func (t TickerRepository) BulkDuplicateKeyInsert(stocks []structs.StockInfo) err
 	var tickers []models.TickerModel
 	for _, stock := range stocks {
 		value := strings.ReplaceAll(stock.MarketValue, ",", "")
+
 		marketValue, _ := decimal.NewFromString(value)
 		ticker := models.TickerModel{
 			Symbol:       stock.SymbolCode,
@@ -47,7 +48,7 @@ func (t TickerRepository) BulkDuplicateKeyInsert(stocks []structs.StockInfo) err
 		}
 		tickers = append(tickers, ticker)
 	}
-	result := db.Database.Clauses(
+	result := db.Database.Model(&models.TickerModel{}).Clauses(
 		clause.OnConflict{UpdateAll: true},
 	).Create(&tickers)
 	fmt.Println("affected rows ", int(result.RowsAffected))
