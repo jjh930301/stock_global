@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/jjh930301/needsss_global/pkg/constant"
 	"github.com/shopspring/decimal"
 )
@@ -21,6 +23,7 @@ type TickerModel struct {
 	StopCode     string           `gorm:"column:stop_code;type:varchar(20);default null;" json:"stopCode"`
 	StopText     string           `gorm:"column:stop_text;type:varchar(100);default null;" json:"stopText"`
 	StopName     string           `gorm:"column:stop_name;type:varchar(100);default null;" json:"stopName"`
+	CreatedAt    time.Time        `gorm:"column:created_at;type:datetime;autoCreateTime;" json:"created_at" time_format:"unix"`
 	DayCandles   []DayCandleModel `gorm:"foreignKey:Symbol;references:Symbol" json:"dayCandles,omitempty"`
 }
 

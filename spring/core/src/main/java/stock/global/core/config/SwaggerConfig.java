@@ -101,7 +101,7 @@ public class SwaggerConfig {
 		return new OpenAPI()
 			.info(new Info()
 			.description("")
-			.title("boiler plate"))
+			.title("stock global"))
 			.addSecurityItem(securityRequirement)
 			.components(components);
 	}

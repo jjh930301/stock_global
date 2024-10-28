@@ -103,9 +103,10 @@ func GetTickerChart(c *gin.Context) {
 
 func getTickerChartsAndInsert(ticker string, reuterCode string) {
 	// client := utils.TorClient()
-	before, _ := time.Parse("20060102", "20141019")
+	b := time.Now().AddDate(0, 0, -15)
+	before := b.Format("20060102")
 	now := time.Now().Format("20060102")
-	url := fmt.Sprintf(constant.TickerChartUri, reuterCode, before.Format("20060102"), now)
+	url := fmt.Sprintf(constant.TickerChartUri, reuterCode, before, now)
 	client := utils.TorClient()
 	resp, err := client.Get(url)
 	if err != nil {
@@ -115,6 +116,7 @@ func getTickerChartsAndInsert(ticker string, reuterCode string) {
 	var dayCandleRes []structs.CandleResponse
 	if err := json.NewDecoder(resp.Body).Decode(&dayCandleRes); err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	repositories.DayCandleRepository{}.BulkDuplicateKeyInsert(ticker, dayCandleRes)

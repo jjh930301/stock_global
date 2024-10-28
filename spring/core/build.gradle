@@ -6,8 +6,7 @@ group = 'stock.global.core'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'  // Java 버전 설정
-    targetCompatibility = '17'
+    sourceCompatibility = '17'
 }
 
 repositories {

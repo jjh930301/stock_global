@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ApiException extends RuntimeException {
-    String message;
+    private String message;
 }
