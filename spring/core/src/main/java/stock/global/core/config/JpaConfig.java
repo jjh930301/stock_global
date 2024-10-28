@@ -20,17 +20,16 @@ import stock.global.core.constants.Constant;
 
 @Configuration
 @EnableJpaRepositories(
-    entityManagerFactoryRef = "EntityManagerFactory", 
-    transactionManagerRef = "JpaTransactionManager",
-    basePackages = "stock.global"
+    entityManagerFactoryRef = Constant.ENTITY_MANAGER_FACTORY, 
+    transactionManagerRef = Constant.JPA_TX_MANAGER
 )
 public class JpaConfig {
   
-	  @Primary
-    @Bean(name = "appDataSource")
+	@Primary
+    @Bean(name = Constant.APP_DATASOURCE)
     public HikariDataSource dataSource() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://"+Constant.DB_URI+":3306/"+Constant.DB_NAME+"?characterEncoding=UTF-8");
+        config.setJdbcUrl("jdbc:mysql://"+Constant.DB_URI+":3310/"+Constant.DB_NAME+"?characterEncoding=UTF-8");
         config.setUsername(Constant.DB_USER);
         config.setPassword(Constant.DB_PASSWORD);
         config.setMaximumPoolSize(5);
@@ -39,7 +38,7 @@ public class JpaConfig {
         return new HikariDataSource(config);
     }
 
-    @Bean(name = "EntityManagerFactory")
+    @Bean(name = Constant.ENTITY_MANAGER_FACTORY)
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
       JpaVendorAdapter jpaVendorAdapter
     ) {
@@ -54,9 +53,9 @@ public class JpaConfig {
 		return em;
     }
 
-    @Bean(name = "JpaTransactionManager")
+    @Bean(name = Constant.JPA_TX_MANAGER)
     public PlatformTransactionManager transactionManager(
-      	@Qualifier("EntityManagerFactory") EntityManagerFactory entityManagerFactory
+      	@Qualifier(Constant.ENTITY_MANAGER_FACTORY) EntityManagerFactory entityManagerFactory
     ) {
         return new JpaTransactionManager(entityManagerFactory);
     }

@@ -31,7 +31,6 @@ func (d DayCandleRepository) BulkDuplicateKeyInsert(symbol string, candles []str
 		clause.OnConflict{UpdateAll: true},
 	).Create(&dayCandles)
 	if result.Error != nil {
-		fmt.Println(result.Error)
+		fmt.Println(symbol, result.Error)
 	}
-	fmt.Println("affected rows  ", int(result.RowsAffected))
 }

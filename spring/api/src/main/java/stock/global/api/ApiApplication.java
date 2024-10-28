@@ -8,15 +8,19 @@ import org.springframework.context.annotation.Import;
 
 import stock.global.core.config.GlobalException;
 import stock.global.core.config.JpaConfig;
+import stock.global.core.config.MybatisConfig;
+import stock.global.core.config.QueryDslConfig;
 import stock.global.core.config.SecurityConfig;
 import stock.global.core.config.SwaggerConfig;
 
 @SpringBootApplication
 @Import({
-	SecurityConfig.class , 
+	SecurityConfig.class, 
 	JpaConfig.class,
-	GlobalException.class , 
-	SwaggerConfig.class
+	GlobalException.class, 
+	SwaggerConfig.class,
+	MybatisConfig.class,
+	QueryDslConfig.class
 })
 public class ApiApplication {
 
