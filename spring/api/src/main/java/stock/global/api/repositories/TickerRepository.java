@@ -1,4 +1,4 @@
-package stock.global.api.domain.ticker.repository;
+package stock.global.api.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

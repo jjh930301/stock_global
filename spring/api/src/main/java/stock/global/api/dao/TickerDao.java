@@ -1,4 +1,4 @@
-package stock.global.api.domain.ticker.dao;
+package stock.global.api.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 

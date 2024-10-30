@@ -21,15 +21,19 @@ import stock.global.core.constants.Constant;
 @Configuration
 @EnableJpaRepositories(
     entityManagerFactoryRef = Constant.ENTITY_MANAGER_FACTORY, 
-    transactionManagerRef = Constant.JPA_TX_MANAGER
+    transactionManagerRef = Constant.JPA_TX_MANAGER,
+    basePackages={"stock.global.api.repositories"}
 )
 public class JpaConfig {
   
-	@Primary
+    @Primary
     @Bean(name = Constant.APP_DATASOURCE)
     public HikariDataSource dataSource() {
+        String url = """
+          jdbc:mysql://%s:%s/%s?characterEncoding=UTF-8
+        """.formatted(Constant.DB_URI, Constant.DB_PORT, Constant.DB_NAME);
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://"+Constant.DB_URI+":3310/"+Constant.DB_NAME+"?characterEncoding=UTF-8");
+        config.setJdbcUrl(url);
         config.setUsername(Constant.DB_USER);
         config.setPassword(Constant.DB_PASSWORD);
         config.setMaximumPoolSize(5);
@@ -48,7 +52,7 @@ public class JpaConfig {
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
 		
-		em.setPackagesToScan("stock.global.core.global.entities");
+		em.setPackagesToScan("stock.global.core.entities");
 		em.setJpaVendorAdapter(jpaVendorAdapter);
 		return em;
     }
