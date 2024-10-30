@@ -2,10 +2,13 @@ package stock.global.core.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -68,4 +71,11 @@ public class TickerEntity {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @OneToMany(
+        targetEntity = DayCandleEntity.class,
+        fetch = FetchType.LAZY ,
+        mappedBy="ticker"
+    )
+    private List<DayCandleEntity> dayCandles;
 }

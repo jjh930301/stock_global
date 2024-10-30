@@ -1,8 +1,12 @@
 package stock.global.core.models;
 
 import java.util.List;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 
+import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +20,8 @@ public class ApiRes<T> {
     private T payload;
     @Builder.Default
     private List<String> messages = new ArrayList();
-    private int status;
+    @Builder.Default
+    private int status = 200;
 
     public ApiRes() {
         this.payload = null;
@@ -40,5 +45,11 @@ public class ApiRes<T> {
         this.payload = payload;
         this.status = status;
         this.messages.add(message);
+    }
+    public void setCookie(HttpServletResponse response , String token) {
+        Cookie cookie = new Cookie("Authorization", token);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }

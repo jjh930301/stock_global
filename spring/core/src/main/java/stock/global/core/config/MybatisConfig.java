@@ -19,7 +19,7 @@ import stock.global.core.constants.Constant;
 @Configuration
 @EnableTransactionManagement
 @MapperScan(
-    basePackages = "stock.global",
+    basePackages = {"stock.global.api.dao"},
     sqlSessionFactoryRef = Constant.MYBATIS_SESSION_FACTORY
 )
 public class MybatisConfig {

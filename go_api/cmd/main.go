@@ -39,8 +39,9 @@ func main() {
 	conn.SetMaxOpenConns(500)
 
 	// if os.Getenv("ENV") == "local" {
-	db.Database.AutoMigrate(
+	db.Database.Debug().AutoMigrate(
 		&models.TickerModel{},
+		&models.MemberModel{},
 		&models.DayCandleModel{},
 	)
 	// }
