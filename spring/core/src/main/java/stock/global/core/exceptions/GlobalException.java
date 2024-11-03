@@ -13,6 +13,22 @@ import stock.global.core.models.ApiRes;
 @RestControllerAdvice
 public class GlobalException {
 
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiRes<?>> methodArgException(MethodArgumentNotValidException e) {
+		return ResponseEntity
+			.status(HttpStatus.BAD_REQUEST)
+			.body(
+				ApiRes.builder()
+					.payload(null)
+					.messages(Arrays.asList(
+						e.getDetailMessageCode(),
+						e.getMessage()
+					))
+					.status(HttpStatus.BAD_REQUEST.value())
+					.build()
+			);
+	}
+
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiRes<?>> apiException(ApiException e) {
 		return ResponseEntity
@@ -29,22 +45,6 @@ public class GlobalException {
 					.build()
 			);
     }
-
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ApiRes<?>> methodArgException(MethodArgumentNotValidException e) {
-		return ResponseEntity
-			.status(HttpStatus.BAD_REQUEST)
-			.body(
-				ApiRes.builder()
-					.payload(null)
-					.messages(Arrays.asList(
-						e.getDetailMessageCode(),
-						e.getMessage()
-					))
-					.status(HttpStatus.BAD_REQUEST.value())
-					.build()
-			);
-	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiRes<?>> globalException(Exception e) {

@@ -2,15 +2,15 @@ FROM gradle:8.10-jdk17 AS build-env
 
 WORKDIR /springapi
 
-COPY settings.gradle build.gradle run-dev.sh /springapi/
+COPY settings.gradle build.gradle run-api.sh /springapi/
 
 COPY api /springapi/api
 COPY core /springapi/core
 
-RUN chmod +x run-dev.sh
+RUN chmod +x run-api.sh
 RUN gradle dependencies --no-daemon || true
 RUN gradle build -x test --no-daemon
 
 EXPOSE 8090
 
-ENTRYPOINT ["sh", "run-dev.sh"]
+ENTRYPOINT ["sh", "run-api.sh"]

@@ -5,16 +5,16 @@ paths:
     get:
       consumes:
       - application/json
-      description: test
+      description: insert tickers
       produces:
       - application/json
       responses: {}
-      summary: ticker test
-  /ticker/chart:
+      summary: ticker
+  /ticker/daycandle:
     get:
       consumes:
       - application/json
-      description: test
+      description: insert daycandles
       produces:
       - application/json
       responses:
@@ -22,7 +22,7 @@ paths:
           description: ok
           schema:
             type: string
-      summary: ticker test
+      summary: day candles
 securityDefinitions:
   BearerAuth:
     in: header

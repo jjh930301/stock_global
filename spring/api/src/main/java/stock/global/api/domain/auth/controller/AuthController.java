@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import stock.global.api.domain.auth.dto.MemberDto;
-import stock.global.api.domain.auth.dto.RegistMemberDto;
 import stock.global.api.domain.auth.dto.MemberResponseDto;
+import stock.global.api.domain.auth.dto.RegistMemberDto;
 import stock.global.api.domain.auth.service.AuthService;
 import stock.global.core.annotations.ControllerInfo;
 import stock.global.core.annotations.SwaggerInfo;
@@ -41,6 +41,4 @@ public class AuthController {
             .ok()
             .body(this.authService.loginMember(dto));
     }
-    
-    
 }
