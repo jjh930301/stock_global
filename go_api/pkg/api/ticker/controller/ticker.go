@@ -8,14 +8,12 @@ import (
 
 const firstPage = 1
 
-// @Summary	ticker test
-// @Description	test
+// @Summary	ticker
+// @Description insert tickers
 // @Accept json
 // @Produce	json
 // @Router /ticker [get]
 func GetTickers(c *gin.Context) {
-	// symbols := []string{"AAPL"}
-
 	total := tickerservice.GetTickerAndInsert(firstPage)
 	// 두번째 페이지부터 갖오면 됨
 	for page := firstPage + 1; page <= total+1; page++ {
