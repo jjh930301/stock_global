@@ -1,16 +1,16 @@
-FROM gradle:8.10-jdk17 AS build-env
+# Dockerfile.dev
+FROM gradle:8.10-jdk17
 
-WORKDIR /springapi
+WORKDIR /app
 
-COPY settings.gradle build.gradle run-api.sh /springapi/
+COPY api /app/api
+COPY core /app/core
+COPY build.gradle /app/
+COPY settings.gradle /app/
 
-COPY api /springapi/api
-COPY core /springapi/core
-
-RUN chmod +x run-api.sh
 RUN gradle dependencies --no-daemon || true
 RUN gradle build -x test --no-daemon
 
 EXPOSE 8090
 
-ENTRYPOINT ["sh", "run-api.sh"]
+ENTRYPOINT ["sh", "-c", "(./gradlew :core:build -x test --continuous) & (./gradlew build -x test --continuous) & ./gradlew api:bootRun -Dspring.profiles.active=dev"]
