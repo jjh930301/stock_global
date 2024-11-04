@@ -12,13 +12,14 @@ import (
 
 const size = 100
 
-func GetTickerAndInsert(page int) int {
+func GetTickerAndInsert(page int) (int, error) {
 	url := fmt.Sprintf(constant.TickerUri, page, size)
 
 	client := utils.TorClient()
 	resp, err := client.Get(url)
 	if err != nil {
 		fmt.Println("cannot get ticker list")
+		return 0, err
 	}
 	defer resp.Body.Close()
 
@@ -31,5 +32,5 @@ func GetTickerAndInsert(page int) int {
 	if err != nil {
 		fmt.Println(err)
 	}
-	return stockRes.TotalCount / size
+	return stockRes.TotalCount / size, nil
 }
