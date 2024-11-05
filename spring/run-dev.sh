@@ -1,1 +1,0 @@
-(./gradlew build -x test --continuous) & ./gradlew api:bootRun -Dspring.profiles.active=dev

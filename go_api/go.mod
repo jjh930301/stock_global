@@ -38,7 +38,7 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/jjh930301/needsss_common v0.0.0-20231008045651-6afcbbc98032
+	github.com/jjh930301/needsss_common v0.0.0-20241031234622-b5539573f2bc
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect

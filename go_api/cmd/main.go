@@ -5,6 +5,7 @@ import (
 
 	"github.com/jjh930301/needsss_common/database"
 	api "github.com/jjh930301/needsss_global/pkg/api"
+	"github.com/jjh930301/needsss_global/pkg/cron"
 	"github.com/jjh930301/needsss_global/pkg/db"
 	"github.com/jjh930301/needsss_global/pkg/docs"
 	"github.com/jjh930301/needsss_global/pkg/models"
@@ -45,8 +46,8 @@ func main() {
 		&models.DayCandleModel{},
 	)
 	// }
-	// s := cron.GoCron()
-	// s.StartAsync()
+	s := cron.GoCron()
+	s.StartAsync()
 	r := api.Router()
 
 	// 127.0.0.1:7070/docs/index.html

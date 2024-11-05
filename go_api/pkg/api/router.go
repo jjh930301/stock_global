@@ -6,7 +6,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	tickerRouter "github.com/jjh930301/needsss_global/pkg/api/ticker"
+	daycandleController "github.com/jjh930301/needsss_global/pkg/api/daycandle/controller"
+	tickerController "github.com/jjh930301/needsss_global/pkg/api/ticker/controller"
 )
 
 func Router() *gin.Engine {
@@ -23,8 +24,11 @@ func Router() *gin.Engine {
 	})
 	ticker := r.Group("/ticker")
 	{
-		ticker.GET(Default, tickerRouter.GetTickers)
-		ticker.GET(TickerChart, tickerRouter.GetTickerChart)
+		ticker.GET(Default, tickerController.GetTickers)
+		daycandle := ticker.Group("/daycandle")
+		{
+			daycandle.GET(Default, daycandleController.GetDayCandle)
+		}
 	}
 
 	return r

@@ -17,27 +17,27 @@ const docTemplate = `{
     "paths": {
         "/ticker": {
             "get": {
-                "description": "test",
+                "description": "insert tickers",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "ticker test",
+                "summary": "ticker",
                 "responses": {}
             }
         },
-        "/ticker/chart": {
+        "/ticker/daycandle": {
             "get": {
-                "description": "test",
+                "description": "insert daycandles",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "ticker test",
+                "summary": "day candles",
                 "responses": {
                     "200": {
                         "description": "ok",

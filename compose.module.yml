@@ -27,3 +27,4 @@ services:
     env_file: ./.env
     volumes:
       - "./spring:/app"
+      - "./srping/core/build:/app/core/build"

@@ -27,7 +27,6 @@ public class WebConfig implements WebMvcConfigurer{
     @Bean
     public FilterRegistrationBean<Filter> jwtFilter() {
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>(new JwtFilter(jwtUtil));
-        // bean.setUrlPatterns(Arrays.asList("/ticker/*"));
         return bean;
     }
     @Bean
