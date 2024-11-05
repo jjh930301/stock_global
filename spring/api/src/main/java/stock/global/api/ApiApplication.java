@@ -30,7 +30,6 @@ import stock.global.core.util.JwtUtil;
 	JwtUtil.class,
 	TokenInterceptor.class,
 	TokenRoleResolver.class,
-	
 })
 @EnableJpaAuditing
 public class ApiApplication {
