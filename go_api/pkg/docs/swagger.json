@@ -6,6 +6,11 @@
     "paths": {
         "/ticker": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "insert tickers",
                 "consumes": [
                     "application/json"
@@ -19,6 +24,11 @@
         },
         "/ticker/daycandle": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "insert daycandles",
                 "consumes": [
                     "application/json"
@@ -27,14 +37,7 @@
                     "application/json"
                 ],
                 "summary": "day candles",
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
+                "responses": {}
             }
         }
     },

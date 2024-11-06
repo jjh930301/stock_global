@@ -52,6 +52,7 @@ func GetTickerChartsAndInsert(
 	resp, err := client.Get(url)
 	if err != nil {
 		fmt.Println("cannot get ticker list")
+		return
 	}
 	defer resp.Body.Close()
 	var dayCandleRes []structs.CandleResponse

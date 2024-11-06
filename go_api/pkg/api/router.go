@@ -1,13 +1,13 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	daycandleController "github.com/jjh930301/needsss_global/pkg/api/daycandle/controller"
 	tickerController "github.com/jjh930301/needsss_global/pkg/api/ticker/controller"
+	"github.com/jjh930301/needsss_global/pkg/utils"
 )
 
 func Router() *gin.Engine {
@@ -19,15 +19,14 @@ func Router() *gin.Engine {
 	}
 	r.GET("/healthcheck", func(c *gin.Context) {
 		clientIP := c.ClientIP()
-		fmt.Println(clientIP)
 		c.JSON(http.StatusOK, gin.H{"ip": clientIP})
 	})
 	ticker := r.Group("/ticker")
 	{
-		ticker.GET(Default, tickerController.GetTickers)
+		ticker.GET(Default, utils.Authenticator, tickerController.GetTickers)
 		daycandle := ticker.Group("/daycandle")
 		{
-			daycandle.GET(Default, daycandleController.GetDayCandle)
+			daycandle.GET(Default, utils.Authenticator, daycandleController.GetDayCandle)
 		}
 	}
 

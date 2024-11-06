@@ -40,7 +40,7 @@ public class JwtUtil {
             .setClaims(new HashMap<>(){{
                 put("id", id);
                 put("accountId", accountId);
-                put("type" , type);
+                put("type" , type.ordinal());
             }});
         jwtBuilder.setIssuer("needsss").signWith(key , algorithm);
         
@@ -48,7 +48,7 @@ public class JwtUtil {
         return jwtBuilder.compact();
     }
 
-public TokenInfo verifyToken(String jwt) {
+    public TokenInfo verifyToken(String jwt) {
         try {
             Claims claim = Jwts.parserBuilder()
                 .setSigningKey(Constant.JWT_SECRET.getBytes())
@@ -58,7 +58,7 @@ public TokenInfo verifyToken(String jwt) {
             return TokenInfo.builder()
                 .id(((Number) claim.get("id")).longValue())
                 .accountId((String) claim.get("accountId"))
-                .type(MemberTypeEnum.valueOf((String) claim.get("type").toString()))
+                .type((int) claim.get("type"))
                 .build();       
         } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException | SignatureException | IllegalArgumentException e) {
             throw new ApiException(e.getMessage() , HttpStatus.UNAUTHORIZED);

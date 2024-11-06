@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/ticker": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "insert tickers",
                 "consumes": [
                     "application/json"
@@ -30,6 +35,11 @@ const docTemplate = `{
         },
         "/ticker/daycandle": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "insert daycandles",
                 "consumes": [
                     "application/json"
@@ -38,14 +48,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "summary": "day candles",
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
+                "responses": {}
             }
         }
     },

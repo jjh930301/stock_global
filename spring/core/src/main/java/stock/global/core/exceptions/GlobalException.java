@@ -1,6 +1,8 @@
 package stock.global.core.exceptions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import jakarta.persistence.PersistenceException;
 import stock.global.core.models.ApiRes;
 
 @RestControllerAdvice
@@ -15,15 +18,17 @@ public class GlobalException {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiRes<?>> methodArgException(MethodArgumentNotValidException e) {
+		List<String> messages = new ArrayList<>();
+		for(Object arg : e.getDetailMessageArguments()) {
+			if(!arg.toString().equals("")) messages.add(arg.toString());
+		}
+		messages.add(e.getMessage());
 		return ResponseEntity
 			.status(HttpStatus.BAD_REQUEST)
 			.body(
 				ApiRes.builder()
 					.payload(null)
-					.messages(Arrays.asList(
-						e.getDetailMessageCode(),
-						e.getMessage()
-					))
+					.messages(messages)
 					.status(HttpStatus.BAD_REQUEST.value())
 					.build()
 			);
@@ -45,6 +50,21 @@ public class GlobalException {
 					.build()
 			);
     }
+	@ExceptionHandler(PersistenceException.class)
+	public ResponseEntity<ApiRes<?>> databaseException(PersistenceException e) {
+		return ResponseEntity
+			.status(HttpStatus.BAD_REQUEST)
+			.body(
+				ApiRes
+					.builder()
+					.payload(null)
+					.messages(List.of(
+						e.getMessage(),
+						e.getClass().getName()
+					))
+					.build()
+			);
+	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiRes<?>> globalException(Exception e) {
@@ -53,7 +73,10 @@ public class GlobalException {
 			.body(
 				ApiRes.builder()
 					.payload(null)
-					.messages(Arrays.asList(e.getMessage() , Arrays.toString(e.getStackTrace())))
+					.messages(List.of(
+						e.getMessage() , 
+						e.getClass().getName()
+					))
 					.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
 					.build()	
 			);

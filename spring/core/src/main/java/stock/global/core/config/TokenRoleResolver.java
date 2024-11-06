@@ -12,6 +12,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import jakarta.servlet.http.HttpServletRequest;
 import stock.global.core.annotations.TokenRole;
+import stock.global.core.enums.MemberTypeEnum;
 import stock.global.core.exceptions.ApiException;
 import stock.global.core.models.TokenInfo;
 
@@ -33,7 +34,12 @@ public class TokenRoleResolver implements HandlerMethodArgumentResolver{
         if(role == null) throw new IllegalArgumentException("TokenRole annotation is missing");
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         TokenInfo info = (TokenInfo) request.getAttribute("token");
-        if(info == null || !role.value().equals(info.getType())) 
+        
+        if(info == null) 
+            throw new ApiException("Unauthorized" , HttpStatus.UNAUTHORIZED);
+        if(info.getType() == MemberTypeEnum.ADMIN.ordinal())
+            return info;
+        if(role.value()  != info.getType())
             throw new ApiException("Forbidden" , HttpStatus.FORBIDDEN);
         return info;
     }

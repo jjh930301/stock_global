@@ -24,6 +24,9 @@ services:
     restart: always
     ports:
       - 8090:8090
-    env_file: ./.env
+    env_file:
+      - ./.env
     volumes:
-      - "./spring:/springapi"
+      - "./spring:/app"
+      - "./spring/core/build:/app/core/build"
+      - "./spring/api/build:/app/api/build"

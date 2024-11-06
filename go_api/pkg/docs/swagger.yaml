@@ -9,6 +9,8 @@ paths:
       produces:
       - application/json
       responses: {}
+      security:
+      - BearerAuth: []
       summary: ticker
   /ticker/daycandle:
     get:
@@ -17,11 +19,9 @@ paths:
       description: insert daycandles
       produces:
       - application/json
-      responses:
-        "200":
-          description: ok
-          schema:
-            type: string
+      responses: {}
+      security:
+      - BearerAuth: []
       summary: day candles
 securityDefinitions:
   BearerAuth:
