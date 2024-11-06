@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 
-	"github.com/jjh930301/needsss_common/database"
 	api "github.com/jjh930301/needsss_global/pkg/api"
 	"github.com/jjh930301/needsss_global/pkg/cron"
 	"github.com/jjh930301/needsss_global/pkg/db"
@@ -25,7 +24,7 @@ func main() {
 		user = os.Getenv("MYSQL_USER")
 	}
 
-	db.Database = database.InitDb(
+	db.Database = db.InitDb(
 		db.Database,
 		user,
 		os.Getenv("MYSQL_ROOT_PASSWORD"),
@@ -50,7 +49,7 @@ func main() {
 	s.StartAsync()
 	r := api.Router()
 
-	// 127.0.0.1:7070/docs/index.html
+	// 127.0.0.1:8000/docs/index.html
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	docs.SwaggerInfo.Title = "api"

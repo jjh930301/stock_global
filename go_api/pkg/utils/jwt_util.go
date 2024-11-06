@@ -8,17 +8,17 @@ import (
 	"github.com/jjh930301/needsss_global/pkg/structs"
 )
 
-func Verification(
-	tokenString string,
-	claims *structs.AuthClaim,
-	t int,
-) (*jwt.Token, error) {
+func Verification(tokenString string, claims *structs.AuthClaim) (*jwt.Token, error) {
 	key := func(token *jwt.Token) (interface{}, error) {
-		_, ok := token.Method.(*jwt.SigningMethodHMAC)
-		if !ok {
+		// 토큰의 서명 알고리즘을 확인합니다.
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
-		return []byte(os.Getenv("JWT_ACCESS_SECRET")), nil
+		secret := os.Getenv("JWT_SECRET")
+		if secret == "" {
+			return nil, errors.New("JWT_SECRET environment variable not set")
+		}
+		return []byte(secret), nil
 	}
 
 	return jwt.ParseWithClaims(tokenString, claims, key)

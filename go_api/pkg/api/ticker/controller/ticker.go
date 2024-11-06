@@ -2,8 +2,9 @@ package ticker
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jjh930301/needsss_common/res"
 	tickerservice "github.com/jjh930301/needsss_global/pkg/api/ticker/service"
+	"github.com/jjh930301/needsss_global/pkg/models/res"
+	"github.com/jjh930301/needsss_global/pkg/structs"
 )
 
 const firstPage = 1
@@ -13,7 +14,12 @@ const firstPage = 1
 // @Accept json
 // @Produce	json
 // @Router /ticker [get]
+// @Security BearerAuth
 func GetTickers(c *gin.Context) {
+	_, verifyErr := c.Keys["member"].(structs.AuthClaim)
+	if !verifyErr {
+		return
+	}
 	total, err := tickerservice.GetTickerAndInsert(firstPage)
 	if err != nil {
 		res.ServerError(c)
