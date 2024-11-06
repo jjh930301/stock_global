@@ -32,7 +32,7 @@ public class TickerController {
         @PathVariable("symbol") String symbol,
         @TokenRole TokenInfo token
     ) {
-        log.info("token {}" , token.getType());
+        log.info("test" , symbol);
         return ResponseEntity
             .ok()
             .body(this.tickerService.getTicker(symbol));

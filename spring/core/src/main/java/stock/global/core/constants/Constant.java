@@ -26,7 +26,7 @@ public class Constant {
     public static final String ENTITY_MANAGER_FACTORY = "EntityManagerFactory";
     public static final String JPA_TX_MANAGER = "JpaTransactionManager";
     public static final String APP_DATASOURCE = "appDataSource";
-    public static final String JWT_SECRET = System.getenv("JWT_SERCERT") == null 
+    public static final String JWT_SECRET = System.getenv("JWT_SECRET") == null 
         ? "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 
-        : System.getenv("JWT_SERCERT");
+        : System.getenv("JWT_SECRET");
 }

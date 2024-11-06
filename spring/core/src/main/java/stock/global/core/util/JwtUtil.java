@@ -48,7 +48,7 @@ public class JwtUtil {
         return jwtBuilder.compact();
     }
 
-public TokenInfo verifyToken(String jwt) {
+    public TokenInfo verifyToken(String jwt) {
         try {
             Claims claim = Jwts.parserBuilder()
                 .setSigningKey(Constant.JWT_SECRET.getBytes())
