@@ -22,6 +22,9 @@
 
 ## directory struct
 
+## go
+
+```
 📦go_api
 ┣ 📂cmd
 ┃ ┗ 📜main.go
@@ -47,6 +50,11 @@
 ┣ 📜go.mod
 ┣ 📜go.sum
 ┗ 📜swag.sh
+```
+
+## spring
+
+```
 📦spring
 ┣ 📂.gradle
 ┣ 📂api
@@ -108,3 +116,4 @@
 ┣ 📜gradlew.bat
 ┣ 📜run-api.sh
 ┗ 📜settings.gradle
+```
