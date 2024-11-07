@@ -3,8 +3,8 @@ package tickerservice
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
-	"github.com/jjh930301/needsss_global/pkg/constant"
 	"github.com/jjh930301/needsss_global/pkg/repositories"
 	"github.com/jjh930301/needsss_global/pkg/structs"
 	"github.com/jjh930301/needsss_global/pkg/utils"
@@ -13,7 +13,7 @@ import (
 const size = 100
 
 func GetTickerAndInsert(page int) (int, error) {
-	url := fmt.Sprintf(constant.TickerUri, page, size)
+	url := fmt.Sprintf(os.Getenv("TICKER_URL"), page, size)
 
 	client := utils.TorClient()
 	resp, err := client.Get(url)
