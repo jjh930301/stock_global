@@ -24,7 +24,7 @@ public class SecurityConfig{
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost"));
+		configuration.setAllowedOrigins(Arrays.asList("*"));
 		configuration.addAllowedHeader("*");
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH","PUT" ,"DELETE"));
 		configuration.setAllowCredentials(true);
@@ -40,9 +40,15 @@ public class SecurityConfig{
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(authorizeRequests ->
 				authorizeRequests
+					.requestMatchers("/h2-console/**")
+					.permitAll()
 					.anyRequest()
 					.permitAll()
+			)
+			.headers(headers -> headers
+				.frameOptions(frameOptions -> frameOptions.disable())
 			);
+
 
 
 		return http.build();

@@ -1,5 +1,7 @@
 package stock.global.core.config;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +19,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import stock.global.core.constants.Constant;
 
-
 @Configuration
 @EnableJpaRepositories(
     entityManagerFactoryRef = Constant.ENTITY_MANAGER_FACTORY, 
@@ -29,16 +30,13 @@ public class JpaConfig {
     @Primary
     @Bean(name = Constant.APP_DATASOURCE)
     public HikariDataSource dataSource() {
-        String url = """
-          jdbc:mysql://%s:%s/%s?characterEncoding=UTF-8
-        """.formatted(Constant.DB_URI, Constant.DB_PORT, Constant.DB_NAME);
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(url);
+        config.setJdbcUrl(Constant.DB_URI);
         config.setUsername(Constant.DB_USER);
         config.setPassword(Constant.DB_PASSWORD);
         config.setMaximumPoolSize(5);
         config.setMinimumIdle(2);
-        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        config.setDriverClassName(Constant.DRIVE_CLASS);
         return new HikariDataSource(config);
     }
 
@@ -51,8 +49,16 @@ public class JpaConfig {
 		
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
-		
 		em.setPackagesToScan("stock.global.core.entities");
+        if(Constant.DRIVE_CLASS.equals("org.h2.Driver")) {
+            em.setJpaPropertyMap(new HashMap<>(){{
+                put("hibernate.hbm2ddl.auto", "create-drop");
+                put("hibernate.show_sql", true);
+                put("hibernate.format_sql", true);
+                put("hibernate.generate-ddl", true);
+                put("hibernate.dialect", "org.hibernate.dialect.H2Dialect"); 
+            }});
+        }
 		em.setJpaVendorAdapter(jpaVendorAdapter);
 		return em;
     }

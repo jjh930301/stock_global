@@ -38,4 +38,14 @@ public class MemberEntity extends BaseEntity{
 
     @Column(name="deleted_at")
     private LocalDateTime deletedAt;
+
+    public MemberEntity(
+        String accountId,
+        String password,
+        MemberTypeEnum type
+    ) {
+        this.setAccountId(accountId);
+        this.setPassword(password);
+        this.setType(type);
+    }
 }

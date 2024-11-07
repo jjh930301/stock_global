@@ -32,7 +32,6 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
     
-    // @Transactional(value = Constant.JPA_TX_MANAGER)
     public ApiRes<MemberResponseDto> registUser(RegistMemberDto dto) {
         MemberEntity member = MemberEntity
             .builder()
