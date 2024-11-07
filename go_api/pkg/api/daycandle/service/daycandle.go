@@ -3,10 +3,10 @@ package daycandleservice
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
-	"github.com/jjh930301/needsss_global/pkg/constant"
 	"github.com/jjh930301/needsss_global/pkg/models"
 	"github.com/jjh930301/needsss_global/pkg/repositories"
 	"github.com/jjh930301/needsss_global/pkg/structs"
@@ -47,7 +47,7 @@ func GetTickerChartsAndInsert(
 	b := time.Now().AddDate(0, 0, int(day))
 	before := b.Format("20060102")
 	now := time.Now().Format("20060102")
-	url := fmt.Sprintf(constant.TickerChartUri, reuterCode, before, now)
+	url := fmt.Sprintf(os.Getenv("CHART_URL"), reuterCode, before, now)
 	client := utils.TorClient()
 	resp, err := client.Get(url)
 	if err != nil {
