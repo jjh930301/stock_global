@@ -1,6 +1,7 @@
 package stock.global.core.config;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -50,14 +51,14 @@ public class JpaConfig {
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
 		em.setPackagesToScan("stock.global.core.entities");
+        Map<String,Object> jpaProperties = new HashMap<>();
+        jpaProperties.put("hibernate.show_sql", true);
+        jpaProperties.put("hibernate.format_sql", true);
+        jpaProperties.put("hibernate.generate-ddl", true);
         if(Constant.DRIVE_CLASS.equals("org.h2.Driver")) {
-            em.setJpaPropertyMap(new HashMap<>(){{
-                put("hibernate.hbm2ddl.auto", "create-drop");
-                put("hibernate.show_sql", true);
-                put("hibernate.format_sql", true);
-                put("hibernate.generate-ddl", true);
-                put("hibernate.dialect", "org.hibernate.dialect.H2Dialect"); 
-            }});
+            jpaProperties.put("hibernate.hbm2ddl.auto", "create-drop");
+            jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect"); 
+            em.setJpaPropertyMap(jpaProperties);
         }
 		em.setJpaVendorAdapter(jpaVendorAdapter);
 		return em;

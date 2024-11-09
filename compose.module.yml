@@ -28,5 +28,4 @@ services:
       - ./.env
     volumes:
       - "./spring:/app"
-      - "./spring/core/build:/app/core/build"
-      - "./spring/api/build:/app/api/build"
+      - "./spring/build:/app/build"
