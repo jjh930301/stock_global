@@ -10,7 +10,7 @@
 
 ## run project(macos)
 
-1. cd go_api/cmd
+1. cd go/cmd
 
 2. go get
 
@@ -25,7 +25,7 @@
 ## go
 
 ```
-📦go_api
+📦go
 ┣ 📂cmd
 ┃ ┗ 📜main.go
 ┣ 📂pkg

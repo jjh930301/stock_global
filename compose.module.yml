@@ -1,20 +1,20 @@
 version: "3"
 services:
-  goapi:
+  gocron:
     build:
-      context: "./go_api"
+      context: "./go"
       dockerfile: Dockerfile
       args:
         - GITACCOUNT=${GIT_ACCOUNT}
         - GITTOKEN=${GIT_TOKEN}
-    container_name: goapi
+    container_name: gocron
     restart: always
     ports:
       - 8000:8000
     env_file:
       - ./.env
     volumes:
-      - ./go_api:/app
+      - ./go:/app
       - /tmp/mysqld:/run/mysqld
   springapi:
     build:
