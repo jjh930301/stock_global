@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import stock.global.api.domain.ticker.dto.TickerResponseDto;
 import stock.global.api.domain.ticker.service.TickerService;
 import stock.global.core.annotations.ControllerInfo;
@@ -16,7 +15,6 @@ import stock.global.core.models.TokenInfo;
 
 
 
-@Slf4j
 @Tag(name="ticker")
 @ControllerInfo(path = "ticker")
 public class TickerController {
@@ -32,7 +30,6 @@ public class TickerController {
         @PathVariable("symbol") String symbol,
         @TokenRole TokenInfo token
     ) {
-        log.info("test" , symbol);
         return ResponseEntity
             .ok()
             .body(this.tickerService.getTicker(symbol));

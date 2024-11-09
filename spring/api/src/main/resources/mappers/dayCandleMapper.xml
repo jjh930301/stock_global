@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="stock.global.api.dao.DayCandleDao">
+  <select 
+    id="findTickers" 
+    resultType="java.util.HashMap" 
+    parameterType="stock.global.api.domain.daycandle.dto.AvgLineDto"
+>
+    with cte as (
+      select
+        t.symbol
+        , t.market_value as marketValue
+        , d.date AS date
+        , d.close AS close
+        <!-- before row -->
+        <foreach item="beforeItem" index="index" collection="before">
+          ,lead(d.close, #{beforeItem}) over(partition by t.symbol order by d.date desc) as before#{beforeItem}
+        </foreach>
+        <!-- after row -->
+        <foreach item="afterItem" index="index" collection="after">
+          ,lag(d.close, #{afterItem}) over(partition by t.symbol order by d.date desc) as after#{afterItem}
+        </foreach>
+      from day_candles d
+        inner join tickers t on t.symbol = d.symbol
+      where d.date <![CDATA[>=]]> #{date}
+        <!-- and d.date <![CDATA[<]]> '2024-11-01'  -->
+        <if test="marketValue != 0 and marketValue != null">
+          and t.market_value <![CDATA[>=]]> ${marketValue}
+        </if>
+    )
+    select
+      cte.symbol
+      , cte.close as close
+      , cte.marketValue
+      , cte.date as date
+      <foreach item="item" index="index" collection="after">
+        , cte.after${item}
+      </foreach>
+    from cte
+    where 1=1
+      <if test="range != null and range != 0">
+        and ((
+          <foreach 
+            item="item" 
+            index="index" 
+            collection="before"
+            separator=" + "
+          >
+            cte.before${item}
+          </foreach>
+        ) / #{avgDay} * (1 + #{range}) )
+        <choose>
+          <when test="upDown == 1">
+            <![CDATA[<]]>
+          </when>
+          <otherwise>
+            <![CDATA[>]]>
+          </otherwise>
+        </choose>
+        cte.close
+      </if>
+  </select>
+</mapper>
