@@ -5,7 +5,7 @@
 >
 <mapper namespace="stock.global.api.dao.DayCandleDao">
   <select 
-    id="findTickers" 
+    id="findAvgTickers" 
     resultType="java.util.HashMap" 
     parameterType="stock.global.api.domain.daycandle.dto.AvgLineDto"
 >
@@ -26,7 +26,6 @@
       from day_candles d
         inner join tickers t on t.symbol = d.symbol
       where d.date <![CDATA[>=]]> #{date}
-        <!-- and d.date <![CDATA[<]]> '2024-11-01'  -->
         <if test="marketValue != 0 and marketValue != null">
           and t.market_value <![CDATA[>=]]> ${marketValue}
         </if>
@@ -62,5 +61,118 @@
         </choose>
         cte.close
       </if>
+  </select>
+  <select 
+    id="findIchimokuTickers" 
+    resultType="java.util.HashMap" 
+    parameterType="stock.global.api.domain.daycandle.dto.IchimokuDto"
+  >
+    with cte as (
+      select
+        d.symbol
+        , t.market_value as marketValue
+        , d.date AS date
+        , d.close AS close
+        <!-- 전환선 -->
+        , (
+          select 
+              (max(close) + min(close)) / 2 as transitionLine
+          from day_candles dc
+          where dc.symbol = d.symbol
+            and date between DATE_SUB(d.date, INTERVAL #{transitionLine} DAY) and d.date
+        ) as transitionLine
+        <!-- 기준선 -->
+        , (
+          select 
+              (max(close) + min(close)) / 2 as base_line
+          from day_candles dc
+          where dc.symbol = d.symbol
+            and date between DATE_SUB(d.date, INTERVAL #{baseLine} DAY) and d.date
+        ) as baseLine
+        <!-- 선행스팬2 -->
+        , (
+          select 
+              (max(close) + min(close)) / 2 as precedSpan2
+          from day_candles dc
+          where dc.symbol = d.symbol
+            and date between DATE_SUB(d.date, INTERVAL #{precedSpan2} DAY) and d.date
+        ) as precedSpan2
+        <!-- after row -->
+        <foreach item="afterItem" index="index" collection="after">
+          ,lag(d.close, #{afterItem}) over(partition by t.symbol order by d.date desc) as after#{afterItem}
+        </foreach>
+      from day_candles d
+        inner join tickers t on t.symbol = d.symbol
+      where d.date <![CDATA[>=]]> #{date}
+        <if test="marketValue != 0 and marketValue != null">
+          and t.market_value <![CDATA[>=]]> ${marketValue}
+        </if>
+    )
+    select
+      cte.symbol as symbol
+      , cte.date as date
+      , cte.close as close
+      , cte.marketValue as marketValue
+      , cte.transitionLine as transitionLine
+      , cte.baseLine as baseLine
+      , (cte.transitionLine + cte.baseLine) / 2 as precedSpan1
+      , cte.precedSpan2 as precedSpan2
+      <foreach item="item" index="index" collection="after">
+        , cte.after${item}
+      </foreach>
+    from cte
+    where 1=1
+    <if test="lines != null">
+      <foreach item="line" collection="lines">
+        <if test="line.line == 1">
+          and cte.transitionLine 
+          <choose>
+            <when test="line.upDown == 1">
+              <![CDATA[<]]>
+            </when>
+            <otherwise>
+              <![CDATA[>]]>
+            </otherwise>
+          </choose>
+          cte.close * (1 + #{line.range})
+        </if>
+        <if test="line.line == 2">
+          and cte.baseLine 
+          <choose>
+            <when test="line.upDown == 1">
+              <![CDATA[<]]>
+            </when>
+            <otherwise>
+              <![CDATA[>]]>
+            </otherwise>
+          </choose>
+          cte.close * (1 + #{line.range})
+        </if>
+        <if test="line.line == 3">
+          and (cte.transitionLine + cte.baseLine) / 2 
+          <choose>
+            <when test="line.upDown == 1">
+              <![CDATA[<]]>
+            </when>
+            <otherwise>
+              <![CDATA[>]]>
+            </otherwise>
+          </choose>
+          cte.close * (1 + #{line.range})
+        </if>
+        <if test="line.line == 4">
+          and cte.precedSpan2 
+          <choose>
+            <when test="line.upDown == 1">
+              <![CDATA[<]]>
+            </when>
+            <otherwise>
+              <![CDATA[>]]>
+            </otherwise>
+          </choose>
+          cte.close * (1 + #{line.range})
+        </if>
+      </foreach>
+    </if>
   </select>
 </mapper>
