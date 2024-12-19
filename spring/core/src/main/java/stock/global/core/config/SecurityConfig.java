@@ -23,15 +23,16 @@ public class SecurityConfig{
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("*"));
+    	CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOriginPatterns(Arrays.asList("*")); 
 		configuration.addAllowedHeader("*");
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH","PUT" ,"DELETE"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE"));
 		configuration.setAllowCredentials(true);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
+
 	
 	@Bean
 	public DefaultSecurityFilterChain filterChain(HttpSecurity http) throws Exception {

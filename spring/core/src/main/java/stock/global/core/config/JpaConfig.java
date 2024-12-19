@@ -53,13 +53,13 @@ public class JpaConfig {
 		em.setPackagesToScan("stock.global.core.entities");
         Map<String,Object> jpaProperties = new HashMap<>();
         jpaProperties.put("hibernate.show_sql", true);
-        jpaProperties.put("hibernate.format_sql", true);
-        jpaProperties.put("hibernate.generate-ddl", true);
         if(Constant.DRIVE_CLASS.equals("org.h2.Driver")) {
+            jpaProperties.put("hibernate.format_sql", true);
+            jpaProperties.put("hibernate.generate-ddl", true);
             jpaProperties.put("hibernate.hbm2ddl.auto", "create-drop");
             jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect"); 
-            em.setJpaPropertyMap(jpaProperties);
         }
+        em.setJpaPropertyMap(jpaProperties);
 		em.setJpaVendorAdapter(jpaVendorAdapter);
 		return em;
     }

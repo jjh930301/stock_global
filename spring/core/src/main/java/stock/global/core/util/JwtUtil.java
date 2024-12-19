@@ -1,6 +1,7 @@
 package stock.global.core.util;
 
 import java.security.Key;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,10 @@ public class JwtUtil {
                 put("accountId", accountId);
                 put("type" , type.ordinal());
             }});
-        jwtBuilder.setIssuer("needsss").signWith(key , algorithm);
+        jwtBuilder
+            .setIssuer("needsss")
+            .signWith(key , algorithm)
+            .setExpiration(new Date(System.currentTimeMillis()+60*10000));
         
 
         return jwtBuilder.compact();

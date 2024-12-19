@@ -13,6 +13,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import stock.global.core.config.DefaultTime;
 import stock.global.core.enums.MemberTypeEnum;
 
 @Getter
@@ -22,19 +24,23 @@ import stock.global.core.enums.MemberTypeEnum;
 @AllArgsConstructor
 @Entity
 @Table(name = "members")
-public class MemberEntity extends BaseEntity{
+@ToString
+public class MemberEntity extends DefaultTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="account_id")
+    @Column(name="account_id" , length=64)
     private String accountId;
 
-    @Column(name="password")
+    @Column(name="password" , length=128 ,nullable=true)
     private String password;
 
     @Column(name = "type")
     private MemberTypeEnum type;
+
+    @Column(name = "accessed_by")
+    private Long accessedBy;
 
     @Column(name="deleted_at")
     private LocalDateTime deletedAt;

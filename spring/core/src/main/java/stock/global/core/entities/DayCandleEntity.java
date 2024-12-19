@@ -7,6 +7,7 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,7 +40,8 @@ public class DayCandleEntity {
     @Column(name = "volume", nullable = false)
     private Long volume;
 
+    @MapsId(value="symbol")
     @ManyToOne(targetEntity=TickerEntity.class)
-    @JoinColumn(name = "id.symbol")
+    @JoinColumn(name = "symbol" , columnDefinition="VARCHAR(12) NOT NULL")
     private TickerEntity ticker;
 }

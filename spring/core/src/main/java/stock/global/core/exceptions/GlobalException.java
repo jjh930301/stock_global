@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -17,21 +16,13 @@ import stock.global.core.models.ApiRes;
 @RestControllerAdvice
 public class GlobalException {
 
-	@ExceptionHandler({MethodArgumentNotValidException.class, MissingServletRequestParameterException.class})
-	public ResponseEntity<ApiRes<?>> handleValidationExceptions(Exception e) {
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiRes<?>> methodArgException(MethodArgumentNotValidException e) {
 		List<String> messages = new ArrayList<>();
-	
-		if (e instanceof MethodArgumentNotValidException ex) {
-			ex.getBindingResult().getFieldErrors().forEach(error ->
-				messages.add(error.getDefaultMessage())
-			);
-		} 
-		if (e instanceof MissingServletRequestParameterException ex) {
-			messages.add("Missing parameter: " + ex.getParameterName());
+		for(Object arg : e.getDetailMessageArguments()) {
+			if(!arg.toString().equals("")) messages.add(arg.toString());
 		}
-	
-		messages.add(e != null ? e.getMessage() : "");
-	
+		messages.add(e.getMessage());
 		return ResponseEntity
 			.status(HttpStatus.BAD_REQUEST)
 			.body(
@@ -42,7 +33,6 @@ public class GlobalException {
 					.build()
 			);
 	}
-	
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiRes<?>> apiException(ApiException e) {
