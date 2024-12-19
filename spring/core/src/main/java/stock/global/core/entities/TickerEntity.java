@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "tickers")
-public class TickerEntity {
+public class TickerEntity{
     
     @Id
     @Column(name = "symbol", length = 12, nullable = false)

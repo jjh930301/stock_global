@@ -37,9 +37,9 @@ public class TokenRoleResolver implements HandlerMethodArgumentResolver{
         
         if(info == null) 
             throw new ApiException("Unauthorized" , HttpStatus.UNAUTHORIZED);
-        if(info.getType() == MemberTypeEnum.ADMIN.ordinal())
+        if(info.getType() != MemberTypeEnum.ADMIN.ordinal())
             return info;
-        if(role.value()  != info.getType())
+        if(role.value().ordinal() != info.getType())
             throw new ApiException("Forbidden" , HttpStatus.FORBIDDEN);
         return info;
     }

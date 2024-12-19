@@ -27,7 +27,7 @@ public class TickerController {
     @SwaggerInfo(summary="get symbol")
     @GetMapping("/{symbol}")
     public ResponseEntity<ApiRes<TickerResponseDto>> getTicker(
-        @PathVariable("symbol") String symbol,
+        @PathVariable String symbol,
         @TokenRole TokenInfo token
     ) {
         return ResponseEntity

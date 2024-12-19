@@ -7,16 +7,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import stock.global.core.aop.RateLimitAspect;
 import stock.global.core.config.JpaConfig;
 import stock.global.core.config.MybatisConfig;
 import stock.global.core.config.QueryDslConfig;
 import stock.global.core.config.SecurityConfig;
+import stock.global.core.config.SmtpConfig;
 import stock.global.core.config.SwaggerConfig;
 import stock.global.core.config.TokenInterceptor;
 import stock.global.core.config.TokenRoleResolver;
 import stock.global.core.config.WebConfig;
 import stock.global.core.exceptions.GlobalException;
 import stock.global.core.util.JwtUtil;
+import stock.global.core.util.StringUtil;
 
 @SpringBootApplication
 @Import({
@@ -30,6 +33,9 @@ import stock.global.core.util.JwtUtil;
 	JwtUtil.class,
 	TokenInterceptor.class,
 	TokenRoleResolver.class,
+	SmtpConfig.class,
+	RateLimitAspect.class,
+	StringUtil.class
 })
 @EnableJpaAuditing
 public class ApiApplication {
