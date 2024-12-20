@@ -18,25 +18,20 @@ public class SmtpConfig {
     public JavaMailSender mailSender(Environment environment) {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         String active = environment.getProperty("spring.profiles.active");
+        Properties props = mailSender.getJavaMailProperties();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
         if(active != null && active.equals("local")) {
             mailSender.setUsername(environment.getProperty("spring.mail.username"));
             mailSender.setPassword(environment.getProperty("spring.mail.password"));
+            props.put("mail.debug", "true");
         } else {
             mailSender.setUsername(System.getenv("MAIL_ID"));
             mailSender.setPassword(System.getenv("MAIL_PW"));
         }
-
-        Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-
-        String env = System.getenv("ENV") != null ? System.getenv("ENV") : "local";
-        if ("local".equals(env)) {
-            props.put("mail.debug", "true");
-        }
 
         mailSender.setJavaMailProperties(props);
         mailSender.setDefaultEncoding("UTF-8");

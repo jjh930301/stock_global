@@ -8,7 +8,8 @@ class RestApi {
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
-    if (localStorage.getItem("key")) {
+
+    if (typeof window !== "undefined" && localStorage.getItem("key")) {
       headers.Authorization = `Bearer ${localStorage.getItem("key")}`;
     }
     return headers;
@@ -24,8 +25,10 @@ class RestApi {
       }
       const response = await fetch(`${uri}`, requestInit);
       if (!response.ok) {
+        console.log(await response.json());
         if (response.status === 401) {
           localStorage.removeItem("key");
+          location.href = "/sign-in";
         }
         const errorData = await response.json(); // 서버에서 반환된 에러 메시지 읽기
         // sign-in을 제외한 나머지는 sign-in으로 보내줌
@@ -48,15 +51,19 @@ class RestApi {
   ): Promise<T> {
     const searchParams = new URLSearchParams();
     if (queryString && typeof queryString === "object") {
-      Object.keys(queryString).map((key) => {
-        const value = queryString[key];
-        if (value) {
-          searchParams.append(key, String(value));
-        }
-      });
+      Promise.all(
+        Object.keys(queryString).map((key) => {
+          const value = queryString[key];
+          if (value) {
+            searchParams.append(key, String(value));
+          }
+        })
+      );
     }
     return this.handleFetch<T>(
-      `${this.baseUrl}${endpoint}?${searchParams.toString()}`,
+      `${this.baseUrl}${endpoint}${
+        searchParams.size === 0 ? "" : "?" + searchParams.toString()
+      }`,
       "GET",
       null
     );

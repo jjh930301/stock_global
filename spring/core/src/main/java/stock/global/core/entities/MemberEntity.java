@@ -33,7 +33,7 @@ public class MemberEntity extends DefaultTime{
     @Column(name="account_id" , length=64)
     private String accountId;
 
-    @Column(name="password" , length=128 ,nullable=true)
+    @Column(name="password" , columnDefinition="VARCHAR(128) DEFAULT NULL")
     private String password;
 
     @Column(name = "type")

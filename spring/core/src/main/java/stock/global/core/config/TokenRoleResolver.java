@@ -34,10 +34,9 @@ public class TokenRoleResolver implements HandlerMethodArgumentResolver{
         if(role == null) throw new IllegalArgumentException("TokenRole annotation is missing");
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         TokenInfo info = (TokenInfo) request.getAttribute("token");
-        
         if(info == null) 
             throw new ApiException("Unauthorized" , HttpStatus.UNAUTHORIZED);
-        if(info.getType() != MemberTypeEnum.ADMIN.ordinal())
+        if(info.getType() == MemberTypeEnum.ADMIN.ordinal())
             return info;
         if(role.value().ordinal() != info.getType())
             throw new ApiException("Forbidden" , HttpStatus.FORBIDDEN);

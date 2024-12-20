@@ -9,6 +9,7 @@ type ButtonProp = {
   onClick: () => void;
   className?: string;
   color?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
+  disabled?: boolean;
 };
 
 export default function Button({
@@ -17,11 +18,13 @@ export default function Button({
   sx = {},
   onClick,
   className,
+  disabled,
   color,
 }: ButtonProp) {
   return (
     <Stack spacing={2} direction={"row"} className={className ?? "m-1"}>
       <MuiButton
+        disabled={disabled}
         variant={variant ?? "contained"}
         onClick={onClick}
         color={color ?? "secondary"}

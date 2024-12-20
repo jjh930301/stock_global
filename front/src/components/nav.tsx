@@ -1,4 +1,5 @@
 "use client";
+import { MemberTypeEnum } from "@/enum/memberTypeEnum";
 import { UserInfo } from "@/lib/api/auth/types";
 interface NavProps {
   userInfo: UserInfo;
@@ -14,7 +15,13 @@ export default function Nav({ userInfo }: NavProps) {
           </a>
         </div>
         <div className="flex space-x-4 text-lg">
-          <a className="hover:underline"></a>
+          {userInfo?.type === MemberTypeEnum.ADMIN ? (
+            <a href={`/admin`} className="hover:underline">
+              admin
+            </a>
+          ) : (
+            <></>
+          )}
           <a href={`/my/${userInfo?.accountId}`} className="hover:underline">
             {userInfo?.accountId}
           </a>
