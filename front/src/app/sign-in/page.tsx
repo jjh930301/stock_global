@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getUserInfo, postSendEmail, postSignIn } from "@/lib/api/auth";
-import useAuthStore from "@/lib/store/auth/authStore";
-import useGlobalStore from "@/lib/store/globalStore";
+import useAuthStore from "@/lib/store/auth/auth-store";
+import useGlobalStore from "@/lib/store/global-store";
 import { useRouter } from "next/navigation";
 import SignIn from "./sign-in";
 
@@ -13,8 +13,10 @@ export default function Page(): JSX.Element {
   const [email, setEmail] = useState<string | number>("");
   const [accountPassword, setAccountPassword] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
-  const { setShowAlert, setRes } = useGlobalStore();
+  const { setShowAlert, setRes, setOnClick, setDuration, setLabel } =
+    useGlobalStore();
   const MIN_LENGTH = 8;
+  const ID = 0;
   const fetchSignIn = async () => {
     if (accountId.length < MIN_LENGTH || accountPassword.length < MIN_LENGTH) {
       setShowAlert(true);
@@ -26,7 +28,9 @@ export default function Page(): JSX.Element {
       });
       return;
     }
+
     const result = await postSignIn(accountId, accountPassword);
+
     if (!result.payload) {
       setShowAlert(true);
       setRes({
@@ -35,21 +39,39 @@ export default function Page(): JSX.Element {
       return;
     }
 
-    if (result.payload.accessToken)
+    if (result.payload.accessToken) {
       localStorage.setItem("key", result.payload.accessToken);
-    setUserInfo(result.payload);
-    router.push("/");
+      setUserInfo(result.payload);
+    }
+
+    if (result.payload.history) {
+      setRes({
+        messages: ["change your password"],
+      });
+      setOnClick(function () {
+        const accountId = result?.payload?.accountId?.toString().split("@")?.[
+          ID
+        ];
+        router.push(`/my/${accountId}`);
+      });
+      setLabel("move");
+      setDuration(1000 * 60);
+      setShowAlert(true);
+    }
+    await router.push("/");
   };
 
   const handleSubmit = () => {
     fetchSignIn();
   };
   const sendEmail = async () => {
-    if (!email) {
+    if (!email || email.toString().trim() !== "") {
+      setOpen(false);
       setShowAlert(true);
       setRes({
         messages: ["enter email"],
       });
+      return;
     }
     const result = await postSendEmail(String(email));
     setShowAlert(true);
@@ -59,18 +81,21 @@ export default function Page(): JSX.Element {
   };
 
   useEffect(() => {
-    if (userInfo?.accountId) {
+    if (userInfo && userInfo?.accountId) {
       const fetchMemberInfo = async () => {
         const result = await getUserInfo();
         if (!result.payload) {
           localStorage.removeItem("key");
           setUserInfo(null);
+          return;
         }
+        router.push("/");
+        return;
       };
       fetchMemberInfo();
-      router.push("/");
+      return;
     }
-  }, [router, setUserInfo, userInfo]);
+  }, [userInfo, setUserInfo, router]);
 
   return (
     <SignIn

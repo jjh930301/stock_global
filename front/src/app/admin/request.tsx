@@ -1,9 +1,11 @@
 "use client";
 
 import Button from "@/components/button";
-import Paging from "@/components/paging/paging";
+import InfiniteScroll from "@/components/paging/infinite-scroll";
+// import Paging from "@/components/paging/paging";
 import { MemberTypeEnum } from "@/enum/memberTypeEnum";
 import { IMember } from "@/lib/api/member/types";
+import { convertUTCLocalDate } from "@/utiils/date";
 import {
   Box,
   Table,
@@ -15,37 +17,49 @@ import {
   Paper,
   Select,
   MenuItem,
+  useMediaQuery,
 } from "@mui/material";
+import { CSSProperties } from "react";
 
 type RequestProp = {
   total: number;
-  itemsPerPage: number;
   currentPage: number;
-  onClick: (page: number) => void;
   members: IMember[];
   memberTypes: { [key: string]: string };
+  fetchMembers: (page: number) => void;
   handleTypeChange: (accountId: string, type: MemberTypeEnum) => void;
-  fetchApprove: () => void;
+  fetchPermission: (accountId: string) => void;
+  pageHandler: (page: number) => void; // 페이지 전환 핸들러
 };
 
 export default function Request({
   total,
-  itemsPerPage,
   currentPage,
-  onClick,
   members,
   memberTypes,
+  fetchMembers,
   handleTypeChange,
-  fetchApprove,
+  fetchPermission,
+  pageHandler,
 }: RequestProp): JSX.Element {
+  const isMobile = useMediaQuery("(max-width: 600px)"); // 모바일 여부 확인
+
+  const tableCellCss: CSSProperties = {
+    color: "white",
+    border: "1px solid black",
+  };
+
   return (
-    <Box className="flex flex-col items-center justify-center min-h-screen p-4 bg-black">
+    <Box
+      className="flex flex-col items-center justify-center min-h-screen p-4 bg-black"
+      style={{ overflowX: "auto" }} // 스크롤 가능
+    >
       <TableContainer
         component={Paper}
         style={{
-          maxWidth: 800,
+          maxWidth: isMobile ? "100%" : 800, // 모바일에서는 전체 화면 사용
           backgroundColor: "black",
-          border: "1px solid #9c27b0",
+          border: "1px solid black",
         }}
       >
         <Table>
@@ -54,39 +68,34 @@ export default function Request({
               <TableCell
                 align="center"
                 style={{
-                  fontWeight: "bold",
-                  color: "white",
-                  border: "1px solid #9c27b0",
+                  ...tableCellCss,
+                  fontSize: isMobile ? 12 : 14, // 모바일에서는 폰트 크기 조정
                 }}
               >
-                계정
+                ACCOUNT
               </TableCell>
               <TableCell
                 align="center"
                 style={{
-                  fontWeight: "bold",
-                  color: "white",
-                  border: "1px solid #9c27b0",
+                  ...tableCellCss,
+                  fontSize: isMobile ? 12 : 14,
                 }}
               >
-                요청일시
+                REQUEST DATE
               </TableCell>
               <TableCell
                 align="center"
                 style={{
-                  fontWeight: "bold",
-                  color: "white",
-                  border: "1px solid #9c27b0",
+                  ...tableCellCss,
+                  fontSize: isMobile ? 12 : 14,
                 }}
               >
-                ADMIN / USER
+                ROLE
               </TableCell>
               <TableCell
                 align="center"
                 style={{
-                  fontWeight: "bold",
-                  color: "white",
-                  border: "1px solid #9c27b0",
+                  ...tableCellCss,
                 }}
               ></TableCell>
             </TableRow>
@@ -96,34 +105,16 @@ export default function Request({
               <TableRow
                 key={member.accountId}
                 sx={{
-                  height: "30px",
+                  height: isMobile ? "20px" : "30px", // 모바일에서는 셀 높이 줄이기
                 }}
               >
-                <TableCell
-                  align="center"
-                  style={{
-                    color: "white",
-                    border: "1px solid #9c27b0",
-                  }}
-                >
+                <TableCell align="center" style={tableCellCss}>
                   {member.accountId}
                 </TableCell>
-                <TableCell
-                  align="center"
-                  style={{
-                    color: "white",
-                    border: "1px solid #9c27b0",
-                  }}
-                >
-                  {member.createdAt}
+                <TableCell align="center" style={tableCellCss}>
+                  {convertUTCLocalDate(member.createdAt)}
                 </TableCell>
-                <TableCell
-                  align="center"
-                  style={{
-                    color: "white",
-                    border: "1px solid #9c27b0",
-                  }}
-                >
+                <TableCell align="center" style={tableCellCss}>
                   <Select
                     value={memberTypes[member.accountId] ?? MemberTypeEnum.USER}
                     onChange={(e) =>
@@ -133,7 +124,7 @@ export default function Request({
                       )
                     }
                     style={{
-                      minWidth: 120,
+                      minWidth: isMobile ? 90 : 120, // 모바일에서 드롭다운 크기 조정
                       backgroundColor: "#9c27b0",
                       color: "black",
                     }}
@@ -142,21 +133,16 @@ export default function Request({
                     <MenuItem value="USER">USER</MenuItem>
                   </Select>
                 </TableCell>
-                <TableCell
-                  align="center"
-                  style={{
-                    color: "white",
-                    border: "1px solid #9c27b0",
-                  }}
-                >
+                <TableCell align="center" style={tableCellCss}>
                   <Button
                     label={"Permission"}
                     variant="contained"
-                    onClick={() => fetchApprove()}
+                    onClick={() => fetchPermission(member.accountId)}
                     sx={{
                       backgroundColor: "#9c27b0",
-                      width: "-webkit-fill-available",
+                      width: isMobile ? "80%" : "-webkit-fill-available",
                       color: "black",
+                      fontSize: isMobile ? "0.8rem" : "1rem", // 모바일에서 버튼 폰트 크기 조정
                       "&:hover": {
                         backgroundColor: "#d4d4d4",
                       },
@@ -168,14 +154,15 @@ export default function Request({
           </TableBody>
         </Table>
       </TableContainer>
-      <Box mt={2}>
-        <Paging
-          total={total}
-          itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-          onClick={onClick}
-        />
-      </Box>
+      <InfiniteScroll<IMember>
+        data={members}
+        total={total}
+        currentPage={currentPage}
+        pageHandler={pageHandler}
+        loadMore={(nextPage) => {
+          fetchMembers(nextPage);
+        }}
+      />
     </Box>
   );
 }

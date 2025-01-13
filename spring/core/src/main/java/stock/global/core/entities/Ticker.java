@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "tickers")
-public class TickerEntity{
+public class Ticker{
     
     @Id
     @Column(name = "symbol", length = 12, nullable = false)
@@ -73,9 +73,9 @@ public class TickerEntity{
     private LocalDateTime createdAt;
 
     @OneToMany(
-        targetEntity = DayCandleEntity.class,
+        targetEntity = DayCandle.class,
         fetch = FetchType.LAZY ,
         mappedBy="ticker"
     )
-    private List<DayCandleEntity> dayCandles;
+    private List<DayCandle> dayCandles;
 }

@@ -1,3 +1,5 @@
+import { authStore } from "../store/auth/auth-store";
+
 class RestApi {
   private baseUrl: string;
   constructor(baseUrl: string) {
@@ -25,13 +27,13 @@ class RestApi {
       }
       const response = await fetch(`${uri}`, requestInit);
       if (!response.ok) {
-        console.log(await response.json());
+        const errorData = await response.json();
         if (response.status === 401) {
+          const { setUserInfo } = authStore();
+          setUserInfo(null);
           localStorage.removeItem("key");
           location.href = "/sign-in";
         }
-        const errorData = await response.json(); // 서버에서 반환된 에러 메시지 읽기
-        // sign-in을 제외한 나머지는 sign-in으로 보내줌
         return errorData;
       }
       return response.json() as Promise<T>;
@@ -67,23 +69,18 @@ class RestApi {
       "GET",
       null
     );
-    // return this.handleResponse<T>(response);
   }
 
   async put<T>(endpoint: string, data?: unknown): Promise<T> {
-    return this.handleFetch<T>(
-      `${this.baseUrl}${endpoint}`,
-      "PUT",
-      data ?? JSON.stringify(data)
-    );
+    return this.handleFetch<T>(`${this.baseUrl}${endpoint}`, "PUT", data);
+  }
+
+  async patch<T>(endpoint: string, data?: unknown): Promise<T> {
+    return this.handleFetch<T>(`${this.baseUrl}${endpoint}`, "PATCH", data);
   }
 
   async post<T>(endpoint: string, data?: unknown): Promise<T> {
-    return this.handleFetch<T>(
-      `${this.baseUrl}${endpoint}`,
-      "POST",
-      data ?? JSON.stringify(data)
-    );
+    return this.handleFetch<T>(`${this.baseUrl}${endpoint}`, "POST", data);
   }
 
   async delete<T>(endpoint: string): Promise<T> {

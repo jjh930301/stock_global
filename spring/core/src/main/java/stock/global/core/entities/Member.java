@@ -1,19 +1,21 @@
 package stock.global.core.entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import stock.global.core.config.DefaultTime;
 import stock.global.core.enums.MemberTypeEnum;
 
@@ -24,8 +26,7 @@ import stock.global.core.enums.MemberTypeEnum;
 @AllArgsConstructor
 @Entity
 @Table(name = "members")
-@ToString
-public class MemberEntity extends DefaultTime{
+public class Member extends DefaultTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,7 +46,14 @@ public class MemberEntity extends DefaultTime{
     @Column(name="deleted_at")
     private LocalDateTime deletedAt;
 
-    public MemberEntity(
+    @OneToMany(
+        targetEntity=MemberHistory.class,
+        fetch=FetchType.LAZY,
+        mappedBy="member"
+    )
+    private List<MemberHistory> histories;
+
+    public Member(
         String accountId,
         String password,
         MemberTypeEnum type

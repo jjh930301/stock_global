@@ -2,13 +2,16 @@ package stock.global.api.domain.auth.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import stock.global.api.domain.auth.dto.ChangePasswordDto;
 import stock.global.api.domain.auth.dto.MemberDto;
 import stock.global.api.domain.auth.dto.MemberResponseDto;
 import stock.global.api.domain.auth.dto.PermitAccountDto;
@@ -33,10 +36,13 @@ public class AuthController {
 
     @SwaggerInfo(summary="login")
     @PostMapping("login")
-    public ResponseEntity<ApiRes<MemberResponseDto>> loginMember(@Valid @RequestBody MemberDto dto) {
+    public ResponseEntity<ApiRes<MemberResponseDto>> loginMember(
+        @Valid @RequestBody MemberDto dto,
+        HttpServletRequest request
+    ) {
         return ResponseEntity
             .ok()
-            .body(this.authService.loginMember(dto));
+            .body(this.authService.loginMember(dto , request.getRemoteAddr()));
     }
 
     @SwaggerInfo(summary="request create account")
@@ -72,6 +78,17 @@ public class AuthController {
         return ResponseEntity
             .ok()
             .body(this.authService.getUserInfo(token));
+    }
+
+    @SwaggerInfo(summary="change password")
+    @PatchMapping
+    public ResponseEntity<ApiRes<Boolean>> patchPassword(
+        @TokenRole TokenInfo token,
+        @RequestBody ChangePasswordDto body
+    ) {
+        return ResponseEntity
+            .ok()
+            .body(this.authService.patchPassword(token, body));
     }
     
     

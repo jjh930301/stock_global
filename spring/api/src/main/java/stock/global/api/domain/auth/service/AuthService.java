@@ -1,5 +1,6 @@
 package stock.global.api.domain.auth.service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.springframework.http.HttpStatus;
@@ -7,13 +8,19 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
+import stock.global.api.domain.auth.dto.ChangePasswordDto;
 import stock.global.api.domain.auth.dto.MemberDto;
 import stock.global.api.domain.auth.dto.MemberResponseDto;
 import stock.global.api.domain.auth.dto.PermitAccountDto;
+import stock.global.api.repositories.MemberHistoryRepository;
 import stock.global.api.repositories.MemberRepository;
-import stock.global.core.entities.MemberEntity;
+import stock.global.core.constants.Constant;
+import stock.global.core.entities.Member;
+import stock.global.core.entities.MemberHistory;
+import stock.global.core.entities.MemberHistoryId;
 import stock.global.core.enums.MemberTypeEnum;
 import stock.global.core.exceptions.ApiException;
 import stock.global.core.models.ApiRes;
@@ -26,6 +33,7 @@ import stock.global.core.util.StringUtil;
 public class AuthService {
 
     private final MemberRepository memberRepository;
+    private final MemberHistoryRepository memberHistoryRepository;
     private final BCryptPasswordEncoder bcryptEncoder;
     private final JwtUtil jwtUtil;
     private final JavaMailSender mailSender;
@@ -33,24 +41,44 @@ public class AuthService {
 
     public AuthService(
         MemberRepository memberRepository,
+        MemberHistoryRepository memberHistoryRepository,
         BCryptPasswordEncoder bcryptEncoder,
         JwtUtil jwtUtil,
         JavaMailSender mailSender,
         StringUtil stringUtil
     ) {
         this.memberRepository = memberRepository;
+        this.memberHistoryRepository = memberHistoryRepository;
         this.bcryptEncoder = bcryptEncoder;
         this.jwtUtil = jwtUtil;
         this.mailSender = mailSender;
         this.stringUtil = stringUtil;
     }
 
-    public ApiRes<MemberResponseDto> loginMember(MemberDto dto) {
-        final MemberEntity member = this.memberRepository.findByAccountId(dto.getAccountId()).get();
+    @Transactional(transactionManager = Constant.JPA_TX_MANAGER)
+    public ApiRes<MemberResponseDto> loginMember(MemberDto dto , String ip) {
+        final Member member = this.memberRepository
+            .findByAccountId(dto.getAccountId())
+            .orElseThrow(() -> new ApiException("check account id and password" , HttpStatus.NOT_FOUND));
         if(
             member == null || 
             !this.bcryptEncoder.matches(dto.getAccountPassword(), member.getPassword())
-        ) throw new ApiException("check account id and password");
+        ) throw new ApiException("check account id and password" , HttpStatus.NOT_FOUND);
+        final boolean isHistory = this.memberHistoryRepository.existByMemberId(member.getId());
+        this.memberHistoryRepository.save(
+            MemberHistory
+                .builder()
+                .id(
+                    MemberHistoryId
+                        .builder()
+                        .id(member.getId())
+                        .ip(ip)
+                        .createdAt(LocalDateTime.now())
+                        .build()
+                )
+                .member(member)
+                .build()
+        );
         return ApiRes
             .<MemberResponseDto>builder()
             .messages(Arrays.asList("Successfully login %s".formatted(member.getAccountId())))
@@ -65,6 +93,7 @@ public class AuthService {
                             member.getType()
                         )
                     )
+                    .isHIstory(isHistory)
                     .type(member.getType())
                     .build()
             )
@@ -98,7 +127,7 @@ public class AuthService {
     }
 
     public ApiRes<?> permitAccount(PermitAccountDto dto , Long adminId) {
-        MemberEntity member = this.memberRepository.findByAccountId(dto.getEmail())
+        Member member = this.memberRepository.findByAccountId(dto.getEmail())
             .orElseThrow(() -> new ApiException("not found account" , HttpStatus.BAD_REQUEST));
         String password = this.stringUtil.generateRandomString(8);
         member.setPassword(this.bcryptEncoder.encode(password));
@@ -111,7 +140,7 @@ public class AuthService {
         message.setFrom(System.getenv("MAIL_ID"));
         message.setSubject("no reply");
         message.setText("""
-            temp password : $s
+            temp password : %s
         """.formatted(password));
         mailSender.send(message);
         return ApiRes
@@ -126,7 +155,7 @@ public class AuthService {
             throw new ApiException("cannot create %s".formatted(email) , HttpStatus.BAD_REQUEST);
         });
         this.memberRepository.save(
-            MemberEntity
+            Member
                 .builder()
                 .accountId(email)
                 .type(MemberTypeEnum.USER)
@@ -137,5 +166,19 @@ public class AuthService {
             .payload(true)
             .messages(Arrays.asList("successfully request account"))
             .build();
+    }
+
+    public ApiRes<Boolean> patchPassword(TokenInfo token , ChangePasswordDto body) {
+        if(!body.getPassword().equals(body.getConfirmPassword()))
+            throw new ApiException("password is not match");
+        
+        Member member = this.memberRepository.findById(token.getId()).orElseThrow(() -> {
+            throw new ApiException("not found %s".formatted(token.getAccountId()));
+        });
+        if(!this.bcryptEncoder.matches(body.getPrevPassword(), member.getPassword()))
+            throw new ApiException("not match previous password");
+        member.setPassword(this.bcryptEncoder.encode(body.getPassword()));
+        this.memberRepository.save(member);
+        return ApiRes.<Boolean>of(true, "successfully change password");
     }
 }

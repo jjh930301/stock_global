@@ -1,10 +1,12 @@
 "use client";
 import { useEffect } from "react";
 import Button from "./button";
-import useGlobalStore from "@/lib/store/globalStore";
+import useGlobalStore from "@/lib/store/global-store";
 
 export default function Alert() {
-  const { res, showAlert, setShowAlert, duration } = useGlobalStore();
+  const { res, showAlert, setShowAlert, duration, onClick, setOnClick, label } =
+    useGlobalStore();
+
   useEffect(() => {
     if (showAlert && duration > 0) {
       const timer = setTimeout(() => {
@@ -33,9 +35,13 @@ export default function Alert() {
             </ul>
             <div className="flex justify-end">
               <Button
-                onClick={() => setShowAlert(false)}
-                label="OK"
+                label={label}
                 className="ml-4 bg-white text-black rounded px-4 py-2"
+                onClick={() => {
+                  if (onClick) onClick();
+                  setShowAlert(false);
+                  setOnClick(() => null);
+                }}
               />
             </div>
           </div>

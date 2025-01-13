@@ -7,14 +7,14 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import stock.global.api.domain.ticker.dto.DayCandleResponseDto;
 import stock.global.api.domain.ticker.dto.TickerResponseDto;
-import stock.global.core.entities.QDayCandleEntity;
-import stock.global.core.entities.QTickerEntity;
+import stock.global.core.entities.QDayCandle;
+import stock.global.core.entities.QTicker;
 
 
 public class TickerDslRepositoryImpl implements TickerDslRepository {
     private final JPAQueryFactory factory;
-    private final QTickerEntity ticker = QTickerEntity.tickerEntity;
-    private final QDayCandleEntity dayCandles = QDayCandleEntity.dayCandleEntity;
+    private final QTicker ticker = QTicker.ticker;
+    private final QDayCandle dayCandles = QDayCandle.dayCandle;
 
     public TickerDslRepositoryImpl(JPAQueryFactory factory) {
         this.factory = factory;

@@ -19,5 +19,5 @@ const useAuthStore = create(
     { name: "useAuthStore" }
   )
 );
-
+export const authStore = useAuthStore.getState;
 export default useAuthStore;

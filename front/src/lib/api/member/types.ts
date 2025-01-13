@@ -2,7 +2,7 @@ import { MemberTypeEnum } from "@/enum/memberTypeEnum";
 
 export interface IMember {
   accountId: string;
-  createdAt: string;
+  createdAt: Date;
   type: MemberTypeEnum;
 }
 
