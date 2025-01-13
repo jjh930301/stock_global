@@ -12,7 +12,7 @@ import (
 
 const size = 100
 
-func GetTickerAndInsert(page int) (int, error) {
+func GetTicker(page int) (int, error) {
 	url := fmt.Sprintf(os.Getenv("TICKER_URL"), page, size)
 
 	client := utils.TorClient()
@@ -33,4 +33,8 @@ func GetTickerAndInsert(page int) (int, error) {
 		fmt.Println(err)
 	}
 	return stockRes.TotalCount / size, nil
+}
+
+func GetKrTicker() {
+
 }

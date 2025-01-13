@@ -20,14 +20,14 @@ func GetTickers(c *gin.Context) {
 	if !verifyErr {
 		return
 	}
-	total, err := tickerservice.GetTickerAndInsert(firstPage)
+	total, err := tickerservice.GetTicker(firstPage)
 	if err != nil {
 		res.ServerError(c)
 		return
 	}
 	// 두번째 페이지부터 갖오면 됨
 	for page := firstPage + 1; page <= total+1; page++ {
-		go tickerservice.GetTickerAndInsert(page)
+		go tickerservice.GetTicker(page)
 	}
 
 	res.Ok(

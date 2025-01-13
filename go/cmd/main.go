@@ -43,6 +43,7 @@ func main() {
 		&models.TickerModel{},
 		&models.MemberModel{},
 		&models.DayCandleModel{},
+		&models.MemberHistoryModel{},
 	)
 	// }
 	s := cron.GoCron()

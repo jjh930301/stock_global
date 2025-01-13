@@ -1,3 +1,4 @@
 rootProject.name = "spring"
 
-include ":api" , ":core"
+include ":api"
+include ":core"

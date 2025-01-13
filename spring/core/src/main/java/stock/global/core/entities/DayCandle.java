@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "day_candles")
-public class DayCandleEntity {
+public class DayCandle {
 
     @EmbeddedId
     private DayCandleId id;
@@ -41,7 +41,7 @@ public class DayCandleEntity {
     private Long volume;
 
     @MapsId(value="symbol")
-    @ManyToOne(targetEntity=TickerEntity.class)
+    @ManyToOne(targetEntity=Ticker.class)
     @JoinColumn(name = "symbol" , columnDefinition="VARCHAR(12) NOT NULL")
-    private TickerEntity ticker;
+    private Ticker ticker;
 }

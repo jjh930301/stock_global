@@ -9,5 +9,6 @@ import stock.global.core.enums.MemberTypeEnum;
 public class MemberResponseDto {
     private final String accountId;
     private final MemberTypeEnum type;
+    private final boolean isHIstory;
     private final String accessToken;
 }

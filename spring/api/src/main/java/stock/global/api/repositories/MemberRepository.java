@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import stock.global.core.entities.MemberEntity;
+import stock.global.core.entities.Member;
 
-public interface MemberRepository extends JpaRepository<MemberEntity, Long> , MemberDslRepository{
-    Optional<MemberEntity> findByAccountId(String accountId);
-    Optional<MemberEntity> findByAccountIdAndDeletedAtIsNull(String accountId);
+public interface MemberRepository extends JpaRepository<Member, Long> , MemberDslRepository{
+    Optional<Member> findByAccountId(String accountId);
+    Optional<Member> findByAccountIdAndDeletedAtIsNull(String accountId);
 }

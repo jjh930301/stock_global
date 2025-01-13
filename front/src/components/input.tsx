@@ -63,6 +63,7 @@ export default function Input<T extends string | number>({
           "& .MuiInputLabel-root": {
             color: "white", // 레이블 텍스트 색을 하얀색으로 설정
           },
+          width: "-webkit-fill-available",
           ...sx,
         }}
       />

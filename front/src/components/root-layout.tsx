@@ -1,6 +1,6 @@
 "use client";
 import Nav from "@/components/nav";
-import useAuthStore from "@/lib/store/auth/authStore";
+import useAuthStore from "@/lib/store/auth/auth-store";
 
 export default function DefaultLayout({
   children,
@@ -10,7 +10,7 @@ export default function DefaultLayout({
   return (
     <>
       <Nav userInfo={userInfo} />
-      {children}
+      <main className={userInfo ? "pt-16" : "pt-0"}>{children}</main>{" "}
     </>
   );
 }

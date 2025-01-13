@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
@@ -45,6 +46,14 @@ public class ApiRes<T> {
         this.payload = payload;
         this.status = status;
         this.messages.add(message);
+    }
+
+    public static <T> ApiRes<T> of(T payload, String message) {
+        return ApiRes
+            .<T>builder()
+            .payload(payload)
+            .messages(Arrays.asList(message))
+            .build();
     }
     public void setCookie(HttpServletResponse response , String token) {
         Cookie cookie = new Cookie("Authorization", token);

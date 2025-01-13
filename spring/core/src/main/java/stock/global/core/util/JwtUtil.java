@@ -43,10 +43,11 @@ public class JwtUtil {
                 put("accountId", accountId);
                 put("type" , type.ordinal());
             }});
+        final int oneDay = 60*1000*3600*24;
         jwtBuilder
             .setIssuer("needsss")
             .signWith(key , algorithm)
-            .setExpiration(new Date(System.currentTimeMillis()+60*10000));
+            .setExpiration(new Date(System.currentTimeMillis()+oneDay));
         
 
         return jwtBuilder.compact();

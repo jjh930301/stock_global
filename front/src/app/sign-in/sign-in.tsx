@@ -4,7 +4,7 @@ import Button from "@/components/button";
 import Input from "@/components/input";
 import { Box } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
-import SendAccountModal from "@/components/inputModal";
+import SendAccountModal from "@/components/modal";
 
 type SignInProp = {
   userInfo: UserInfo;
@@ -108,13 +108,47 @@ export default function SignIn({
           </Box>
         </Box>
       )}
-      <SendAccountModal
-        value={email}
-        setValue={setEmail}
-        handleSubmit={sendEmail}
-        open={open}
-        setOpen={setOpen}
-      />
+      <SendAccountModal open={open} setOpen={setOpen}>
+        <Box
+          className="bg-black p-2 rounded-md shadow-lg h-1/2"
+          sx={{
+            width: "30vw",
+            minWidth: {
+              xs: "50vw",
+              sm: "30vw",
+            },
+            height: "auto",
+          }}
+        >
+          <Input
+            value={email}
+            label="email"
+            variant="outlined"
+            setValue={setEmail}
+            className="mb-1"
+            sx={{
+              width: "-webkit-fill-available",
+            }}
+          />
+        </Box>
+        <Box
+          sx={{
+            height: "-webkit-fill-available",
+            paddingLeft: "5px",
+          }}
+        >
+          <Button
+            label="📥"
+            sx={{
+              width: "-webkit-fill-available",
+              minWidth: "15vw",
+              height: "4em",
+            }}
+            className="mt-1"
+            onClick={sendEmail}
+          />
+        </Box>
+      </SendAccountModal>
     </>
   );
 }
