@@ -2,7 +2,7 @@
 
 ## project environment
 
-- jdk17
+- jdk21
 
 - go1.20
 

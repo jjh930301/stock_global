@@ -1,5 +1,5 @@
 # Dockerfile.dev
-FROM gradle:8.10-jdk17
+FROM gradle:8.12-jdk21
 
 WORKDIR /app
 
