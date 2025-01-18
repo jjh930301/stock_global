@@ -20,3 +20,65 @@ services:
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  tor:
+    image: dperson/torproxy
+    container_name: tor
+    ports:
+      - "9050:9050"
+      - "9051:9051"
+      - "5353:5353"
+    volumes:
+      - ./tor/torrc:/etc/tor/torrc
+    restart: always
+  redis-master:
+    image: redis:7-alpine
+    container_name: redis-master
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/master.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+  redis-node1:
+    image: redis:7-alpine
+    container_name: redis-node1
+    ports:
+      - "6380:6379"
+    volumes:
+      - ./redis/node.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
+
+  redis-node2:
+    image: redis:7-alpine
+    container_name: redis-node2
+    ports:
+      - "6381:6379"
+    volumes:
+      - ./redis/node.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
+
+  sentinel1:
+    image: redis:7-alpine
+    container_name: sentinel1
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
+
+  sentinel2:
+    image: redis:7-alpine
+    container_name: sentinel2
+    ports:
+      - "26380:26379"
+    volumes:
+      - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
+
+  sentinel3:
+    image: redis:7-alpine
+    container_name: sentinel3
+    ports:
+      - "26381:26379"
+    volumes:
+      - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel

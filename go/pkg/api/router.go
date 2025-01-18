@@ -11,6 +11,7 @@ import (
 )
 
 func Router() *gin.Engine {
+	gin.SetMode(gin.DebugMode)
 	r := gin.New()
 	if os.Getenv("ENV") == "dev" {
 		r.Use(gin.LoggerWithConfig(gin.LoggerConfig{
@@ -23,9 +24,11 @@ func Router() *gin.Engine {
 	})
 	ticker := r.Group("/ticker")
 	{
+		ticker.GET(Kr, tickerController.GetKrTicker)
 		ticker.GET(Default, utils.Authenticator, tickerController.GetTickers)
 		daycandle := ticker.Group("/daycandle")
 		{
+			daycandle.GET(Kr, utils.Authenticator, daycandleController.GetKrDayCandle)
 			daycandle.GET(Default, utils.Authenticator, daycandleController.GetDayCandle)
 		}
 	}

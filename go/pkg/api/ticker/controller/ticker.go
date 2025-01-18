@@ -9,6 +9,7 @@ import (
 
 const firstPage = 1
 
+// @Tags ticker
 // @Summary	ticker
 // @Description insert tickers
 // @Accept json

@@ -38,14 +38,16 @@ func main() {
 	conn.SetMaxIdleConns(500)
 	conn.SetMaxOpenConns(500)
 
-	// if os.Getenv("ENV") == "local" {
-	db.Database.Debug().AutoMigrate(
-		&models.TickerModel{},
-		&models.MemberModel{},
-		&models.DayCandleModel{},
-		&models.MemberHistoryModel{},
-	)
-	// }
+	if os.Getenv("ENV") == "local" {
+		db.Database.Debug().AutoMigrate(
+			&models.TickerModel{},
+			&models.MemberModel{},
+			&models.DayCandleModel{},
+			&models.MemberHistoryModel{},
+			&models.KrTickerModel{},
+			&models.KrDayCandleModel{},
+		)
+	}
 	s := cron.GoCron()
 	s.StartAsync()
 	r := api.Router()

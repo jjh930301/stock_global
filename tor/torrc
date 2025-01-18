@@ -1,0 +1,7 @@
+SocksPort 0.0.0.0:9050
+ControlPort 0.0.0.1:9051
+CookieAuthentication 0
+SafeSocks 1
+LongLivedPorts 443,80
+NewCircuitPeriod 120
+MaxCircuitDirtiness 120

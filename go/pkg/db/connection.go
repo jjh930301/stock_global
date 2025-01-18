@@ -8,8 +8,6 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-// var DB *gorm.DB
-
 func InitDb(db *gorm.DB, user, password, host, database string) *gorm.DB {
 	db = connection(user, password, host, database)
 	return db

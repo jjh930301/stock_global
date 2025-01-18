@@ -12,18 +12,18 @@ import (
 // @Description	insert daycandles
 // @Accept json
 // @Produce	json
-// @Router /ticker/daycandle [get]
+// @Router /ticker/daycandle/kr [get]
 // @Security BearerAuth
-func GetDayCandle(c *gin.Context) {
+func GetKrDayCandle(c *gin.Context) {
 	_, verifyErr := c.Keys["member"].(structs.AuthClaim)
 	if !verifyErr {
 		return
 	}
-	result := daycandleservice.GetDayCandle()
+	result := daycandleservice.GetKrDayCandle()
 	res.Ok(
 		c,
-		"message",
-		gin.H{"result": result},
+		"getting kr day candles",
+		result,
 		200,
 	)
 }

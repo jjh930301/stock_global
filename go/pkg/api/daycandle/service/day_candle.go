@@ -51,7 +51,7 @@ func GetTickerChartsAndInsert(
 	client := utils.TorClient()
 	resp, err := client.Get(url)
 	if err != nil {
-		fmt.Println("cannot get ticker list")
+		fmt.Println("tor error", err)
 		return
 	}
 	defer resp.Body.Close()

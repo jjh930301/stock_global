@@ -29,6 +29,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "ticker"
+                ],
                 "summary": "ticker",
                 "responses": {}
             }
@@ -47,7 +50,52 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "dayCandle"
+                ],
                 "summary": "day candles",
+                "responses": {}
+            }
+        },
+        "/ticker/daycandle/kr": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "insert daycandles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dayCandle"
+                ],
+                "summary": "day candles",
+                "responses": {}
+            }
+        },
+        "/ticker/kr": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "insert kr tickers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticker"
+                ],
+                "summary": "krTicker",
                 "responses": {}
             }
         }
