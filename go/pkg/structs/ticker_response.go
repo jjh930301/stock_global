@@ -2,16 +2,16 @@ package structs
 
 import "time"
 
-// 전체 응답 구조체
-type StockResponse struct {
-	Page       int         `json:"page"`
-	PageSize   int         `json:"pageSize"`
-	TotalCount int         `json:"totalCount"`
-	Stocks     []StockInfo `json:"stocks"`
+// 전체 응답
+type TickerResponse struct {
+	Page       int          `json:"page"`
+	PageSize   int          `json:"pageSize"`
+	TotalCount int          `json:"totalCount"`
+	Stocks     []TickerInfo `json:"stocks"`
 }
 
-// 개별 주식 정보 구조체
-type StockInfo struct {
+// 개별 주식 정보
+type TickerInfo struct {
 	StockType              string             `json:"stockType"`    // save
 	StockEndType           string             `json:"stockEndType"` //save
 	CompareToPreviousPrice ComparePriceInfo   `json:"compareToPreviousPrice"`
@@ -48,7 +48,7 @@ type StockInfo struct {
 	StockEndUrl            string             `json:"stockEndUrl"`
 }
 
-// 연장 거래 정보 구조체
+// 연장 거래 정보
 type OverMarketInfo struct {
 	CompareToPreviousClosePrice string           `json:"compareToPreviousClosePrice"`
 	CompareToPreviousPrice      ComparePriceInfo `json:"compareToPreviousPrice"`
@@ -59,14 +59,14 @@ type OverMarketInfo struct {
 	TradingSessionType          string           `json:"tradingSessionType"`
 }
 
-// 가격 비교 정보 구조체
+// 가격 비교 정보
 type ComparePriceInfo struct {
 	Code string `json:"code"`
 	Text string `json:"text"`
 	Name string `json:"name"`
 }
 
-// 주식 거래소 정보 구조체
+// 주식 거래소 정보
 type StockExchangeInfo struct {
 	Code               string `json:"code"`
 	ZoneId             string `json:"zoneId"`
@@ -83,21 +83,21 @@ type StockExchangeInfo struct {
 	Name               string `json:"name"`       // save 마켓 타입
 }
 
-// 산업 코드 정보 구조체
+// 산업 코드 정보
 type IndustryInfo struct {
 	Code             string `json:"code"`
 	IndustryGroupKor string `json:"industryGroupKor"`
 	Name             string `json:"name"`
 }
 
-// 통화 정보 구조체
+// 통화 정보
 type CurrencyInfo struct {
 	Code string `json:"code"` // save 화폐 단위 insert 후 확인
 	Text string `json:"text"`
 	Name string `json:"name"`
 }
 
-// 거래 정지 정보 구조체
+// 거래 정지 정보
 type TradeStopInfo struct {
 	Code string `json:"code"` // 값을 그대로 담아서 넣어서 확인
 	Text string `json:"text"` // 값을 그대로 담아서 확인

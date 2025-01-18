@@ -1,6 +1,6 @@
 import { ApiRes } from "@/lib/interfaces/apiRes";
 import { MembersResponse } from "./types";
-import { restApi } from "../axios";
+import { restApi } from "../restApi";
 
 export const getMembers = async (
   page: number,

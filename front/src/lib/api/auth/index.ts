@@ -1,5 +1,5 @@
 import { ApiRes } from "@/lib/interfaces/apiRes";
-import { restApi } from "../axios";
+import { restApi } from "../restApi";
 import { UserInfo } from "./types";
 import { MemberTypeEnum } from "@/enum/memberTypeEnum";
 
