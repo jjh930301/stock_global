@@ -20,15 +20,44 @@ services:
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  tor:
+  tor1:
     image: dperson/torproxy
-    container_name: tor
+    container_name: tor1
     ports:
       - "9050:9050"
       - "9051:9051"
       - "5353:5353"
     volumes:
       - ./tor/torrc:/etc/tor/torrc
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: "0.25"
+    restart: always
+  tor2:
+    image: dperson/torproxy
+    container_name: tor2
+    ports:
+      - "9052:9050"
+      - "9053:9051"
+      - "5354:5353"
+    volumes:
+      - ./tor/torrc:/etc/tor/torrc
+  tor3:
+    image: dperson/torproxy
+    container_name: tor3
+    ports:
+      - "9054:9050"
+      - "9055:9051"
+      - "5355:5353"
+    volumes:
+      - ./tor/torrc:/etc/tor/torrc
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: "0.25"
     restart: always
   redis-master:
     image: redis:7-alpine

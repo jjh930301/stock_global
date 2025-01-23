@@ -98,6 +98,27 @@ const docTemplate = `{
                 "summary": "krTicker",
                 "responses": {}
             }
+        },
+        "/ticker/kr/trend": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "insert ticker trend",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticker"
+                ],
+                "summary": "kr ticker trend",
+                "responses": {}
+            }
         }
     },
     "securityDefinitions": {

@@ -1,13 +1,10 @@
 package scheduler
 
 import (
-	"log"
-
 	tickerservice "github.com/jjh930301/needsss_global/pkg/api/ticker/service"
 )
 
 func TickerCron() {
-	log.Println("ticker cron job")
 	var firstPage = 1
 	total, err := tickerservice.GetTicker(firstPage)
 	if err != nil {
@@ -17,8 +14,4 @@ func TickerCron() {
 	for page := firstPage + 1; page <= total+1; page++ {
 		go tickerservice.GetTicker(page)
 	}
-}
-
-func KrTickerCron() {
-
 }

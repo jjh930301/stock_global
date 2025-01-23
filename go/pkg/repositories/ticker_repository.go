@@ -8,14 +8,14 @@ import (
 
 type TickerRepository struct{}
 
-func (t TickerRepository) FindAll() []models.TickerModel {
-	var tickers []models.TickerModel
-	db.Database.Model(&models.TickerModel{}).Find(&tickers)
+func (t TickerRepository) FindAll() []models.Ticker {
+	var tickers []models.Ticker
+	db.Database.Model(&models.Ticker{}).Find(&tickers)
 	return tickers
 }
 
-func (t TickerRepository) BulkDuplicateKeyInsert(tickers []models.TickerModel) error {
-	result := db.Database.Model(&models.TickerModel{}).Clauses(
+func (t TickerRepository) BulkDuplicateKeyInsert(tickers []models.Ticker) error {
+	result := db.Database.Model(&models.Ticker{}).Clauses(
 		clause.OnConflict{UpdateAll: true},
 	).Create(&tickers)
 	if result.Error != nil {

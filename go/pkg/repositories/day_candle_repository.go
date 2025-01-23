@@ -3,19 +3,19 @@ package repositories
 import (
 	"fmt"
 
+	candleDto "github.com/jjh930301/needsss_global/pkg/api/daycandle/dto"
 	"github.com/jjh930301/needsss_global/pkg/db"
 	"github.com/jjh930301/needsss_global/pkg/models"
-	"github.com/jjh930301/needsss_global/pkg/structs"
 	"gorm.io/gorm/clause"
 )
 
 type DayCandleRepository struct{}
 
-func (d DayCandleRepository) BulkDuplicateKeyInsert(symbol string, candles []structs.CandleResponse) {
-	var dayCandles []models.DayCandleModel
+func (d DayCandleRepository) BulkDuplicateKeyInsert(symbol string, candles []candleDto.CandleResponse) {
+	var dayCandles []models.DayCandle
 	for _, candle := range candles {
 		t, _ := candle.ToTime()
-		dayCandle := models.DayCandleModel{
+		dayCandle := models.DayCandle{
 			Symbol: symbol,
 			Date:   t,
 			Open:   candle.OpenPrice,

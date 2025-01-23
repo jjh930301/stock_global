@@ -6,11 +6,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
+	"sync"
+	"time"
 
+	tickerDto "github.com/jjh930301/needsss_global/pkg/api/ticker/dto"
 	"github.com/jjh930301/needsss_global/pkg/models"
 	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/structs"
+	"github.com/jjh930301/needsss_global/pkg/utils"
 	"github.com/shopspring/decimal"
 )
 
@@ -40,7 +45,7 @@ func GetKrTickers() error {
 		return fmt.Errorf("error reading response body: %v", err)
 	}
 
-	var response structs.KrTickerResponse
+	var response tickerDto.KrTickerResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return fmt.Errorf("error unmarshalling JSON response: %v", err)
@@ -53,8 +58,8 @@ func GetKrTickers() error {
 	return nil
 }
 
-func bulkInsert(tickers []structs.KrTicker) error {
-	var krTickers []models.KrTickerModel
+func bulkInsert(tickers []tickerDto.KrTicker) error {
+	var krTickers []models.KrTicker
 	for _, ticker := range tickers {
 		if ticker.Market == "KOSPI" || ticker.Market == "KOSDAQ" {
 			var market uint8
@@ -65,7 +70,7 @@ func bulkInsert(tickers []structs.KrTicker) error {
 			}
 			value := strings.ReplaceAll(ticker.MarketCap, ",", "")
 			marketCap, _ := decimal.NewFromString(value)
-			krTicker := models.KrTickerModel{
+			krTicker := models.KrTicker{
 				Market:    market,
 				Symbol:    ticker.Symbol,
 				Name:      ticker.Name,
@@ -74,9 +79,98 @@ func bulkInsert(tickers []structs.KrTicker) error {
 			krTickers = append(krTickers, krTicker)
 		}
 	}
-	err := repositories.KrTickerRepository{}.BulkDuplicatKeyInsert(krTickers)
+	err := repositories.KrTickerRepository{}.BulkDuplicateKeyInsert(krTickers)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func GetKrTickerTrends() error {
+	krTickers := repositories.KrTickerRepository{}.FindAll()
+	batchSize := 100
+	for i := 0; i < len(krTickers); i += batchSize {
+		end := i + batchSize
+		if end > len(krTickers) {
+			end = len(krTickers)
+		}
+		batch := krTickers[i:end]
+		var innerWg sync.WaitGroup
+		for _, krTicker := range batch {
+			innerWg.Add(1)
+			go func(t models.KrTicker) {
+				defer innerWg.Done()
+				fetchAndProcessTrendData(t.Symbol, "")
+			}(krTicker)
+		}
+		innerWg.Wait()
+	}
+	// for _, krTicker := range krTickers {
+	// 	go fetchAndProcessTrendData(krTicker.Symbol, "")
+	// }
+
+	return nil
+}
+
+func fetchAndProcessTrendData(ticker string, date string) {
+	client := utils.TorClient() // Tor 클라이언트 사용
+	pageSize := 50
+	totalPages := 6
+	baseURL := os.Getenv("KR_TREND_URL")
+
+	if date == "" {
+		date = time.Now().In(utils.KrTime()).Format("20060102")
+	}
+
+	var trends []models.KrTrend
+	for page := 1; page <= totalPages; page++ {
+		url := fmt.Sprintf(baseURL+"?pageSize=%d&bizdate=%s", ticker, pageSize, date)
+		res, err := client.Get(url)
+		if err != nil {
+			fmt.Printf("Failed to fetch data for ticker %s on page %d: %v\n", ticker, page, err)
+			return
+		}
+		defer res.Body.Close()
+
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			fmt.Printf("Failed to read response for ticker %s on page %d: %v\n", ticker, page, err)
+			return
+		}
+
+		var krTrends []tickerDto.KrTickerTrendResponse
+		err = json.Unmarshal(body, &krTrends)
+		if err != nil {
+			fmt.Printf("Failed to unmarshal response for ticker %s on page %d: %v\n", ticker, page, err)
+			return
+		}
+
+		for _, trend := range krTrends {
+			replacer := strings.NewReplacer(
+				",", "",
+				"+", "",
+				"%", "",
+			)
+			dateTime, _ := time.Parse("20060102", trend.BizDate)
+			foreign, _ := strconv.Atoi(replacer.Replace(trend.Foreign))
+			organ, _ := strconv.Atoi(replacer.Replace(trend.Organ))
+			individual, _ := strconv.Atoi(replacer.Replace(trend.Individual))
+			replaceRatio := replacer.Replace(trend.ForeignRatio)
+			ratioFloat, _ := strconv.ParseFloat(replaceRatio, 64)
+			ratio := decimal.NewFromFloat(ratioFloat)
+			krTrend := models.KrTrend{
+				Symbol:       trend.Symbol,
+				Date:         dateTime,
+				Foreign:      foreign,
+				ForeignRatio: ratio,
+				Organ:        organ,
+				Individual:   individual,
+			}
+
+			trends = append(trends, krTrend)
+		}
+		date = krTrends[len(krTrends)-1].BizDate
+	}
+
+	repositories.KrTrendRepository{}.BulkDuplicateKeyInsert(trends)
 }

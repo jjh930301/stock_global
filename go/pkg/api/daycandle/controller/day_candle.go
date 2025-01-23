@@ -19,11 +19,11 @@ func GetDayCandle(c *gin.Context) {
 	if !verifyErr {
 		return
 	}
-	result := daycandleservice.GetDayCandle()
+	result := daycandleservice.GetDayCandle(-300)
 	res.Ok(
 		c,
 		"message",
-		gin.H{"result": result},
+		result,
 		200,
 	)
 }

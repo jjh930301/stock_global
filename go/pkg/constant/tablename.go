@@ -7,4 +7,5 @@ const (
 	MemberHistory = "member_histories"
 	KrTicker      = "kr_tickers"
 	KrDayCandle   = "kr_day_candles"
+	KrTrend       = "kr_trends"
 )

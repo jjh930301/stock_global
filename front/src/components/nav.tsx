@@ -22,9 +22,7 @@ export default function Nav({ userInfo }: NavProps) {
       >
         <nav className="flex justify-between max-w-4xl mx-auto">
           <div className="text-lg font-bold">
-            <Link href="/" className="hover:pointer-events-auto">
-              Needsss
-            </Link>
+            <Link href="/" className="hover:pointer-events-auto"></Link>
           </div>
           <div className="flex space-x-4 text-lg">
             {userInfo?.type === MemberTypeEnum.ADMIN ? (

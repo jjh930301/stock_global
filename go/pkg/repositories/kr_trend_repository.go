@@ -6,12 +6,13 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type KrDayCandleRepository struct{}
+type KrTrendRepository struct{}
 
-func (k KrDayCandleRepository) BulkDuplicatKeyInsert(dayCandles []models.KrDayCandle) error {
-	result := db.Database.Model(&models.KrDayCandle{}).Clauses(
+func (k KrTrendRepository) BulkDuplicateKeyInsert(trends []models.KrTrend) error {
+	result := db.Database.Model(&models.KrTrend{}).Clauses(
 		clause.OnConflict{UpdateAll: true},
-	).Create((dayCandles))
+	).Create(&trends)
+
 	if result.Error != nil {
 		return result.Error
 	}
