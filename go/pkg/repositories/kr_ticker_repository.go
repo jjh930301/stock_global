@@ -8,16 +8,18 @@ import (
 
 type KrTickerRepository struct{}
 
-func (k KrTickerRepository) FindAll() []models.KrTickerModel {
-	var krTickers []models.KrTickerModel
+func (k KrTickerRepository) FindAll() []models.KrTicker {
+	var krTickers []models.KrTicker
 	db.Database.Model(
-		&models.KrTickerModel{},
+		&models.KrTicker{},
 	).Select("symbol").Find(&krTickers)
 	return krTickers
 }
 
-func (k KrTickerRepository) BulkDuplicatKeyInsert(tickers []models.KrTickerModel) error {
-	result := db.Database.Model(&models.KrTickerModel{}).Clauses(
+func (k KrTickerRepository) BulkDuplicateKeyInsert(tickers []models.KrTicker) error {
+	result := db.Database.Model(
+		&models.KrTicker{},
+	).Clauses(
 		clause.OnConflict{UpdateAll: true},
 	).Create(&tickers)
 	if result.Error != nil {

@@ -40,12 +40,13 @@ func main() {
 
 	if os.Getenv("ENV") == "local" {
 		db.Database.Debug().AutoMigrate(
-			&models.TickerModel{},
-			&models.MemberModel{},
-			&models.DayCandleModel{},
-			&models.MemberHistoryModel{},
-			&models.KrTickerModel{},
-			&models.KrDayCandleModel{},
+			&models.Ticker{},
+			&models.Member{},
+			&models.DayCandle{},
+			&models.MemberHistory{},
+			&models.KrTicker{},
+			&models.KrDayCandle{},
+			&models.KrTrend{},
 		)
 	}
 	s := cron.GoCron()

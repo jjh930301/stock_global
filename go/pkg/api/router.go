@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -24,14 +25,14 @@ func Router() *gin.Engine {
 	})
 	ticker := r.Group("/ticker")
 	{
-		ticker.GET(Kr, tickerController.GetKrTicker)
+		ticker.GET(Kr, utils.Authenticator, tickerController.GetKrTicker)
 		ticker.GET(Default, utils.Authenticator, tickerController.GetTickers)
+		ticker.GET(fmt.Sprintf("%s%s", Kr, Trend), utils.Authenticator, tickerController.GetKrTickerTrends)
 		daycandle := ticker.Group("/daycandle")
 		{
 			daycandle.GET(Kr, utils.Authenticator, daycandleController.GetKrDayCandle)
 			daycandle.GET(Default, utils.Authenticator, daycandleController.GetDayCandle)
 		}
 	}
-
 	return r
 }

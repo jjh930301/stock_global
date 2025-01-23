@@ -34,7 +34,7 @@ func GetTickers(c *gin.Context) {
 	res.Ok(
 		c,
 		"getting data",
-		gin.H{"result": true},
+		true,
 		200,
 	)
 }

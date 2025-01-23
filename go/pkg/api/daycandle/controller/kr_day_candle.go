@@ -19,7 +19,7 @@ func GetKrDayCandle(c *gin.Context) {
 	if !verifyErr {
 		return
 	}
-	result := daycandleservice.GetKrDayCandle()
+	result := daycandleservice.GetKrDayCandle(-500)
 	res.Ok(
 		c,
 		"getting kr day candles",

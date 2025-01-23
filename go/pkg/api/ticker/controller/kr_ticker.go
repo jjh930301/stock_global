@@ -30,9 +30,7 @@ func GetKrTicker(c *gin.Context) {
 	res.Ok(
 		c,
 		"getting kr tickers",
-		gin.H{
-			"result": true,
-		},
+		true,
 		200,
 	)
 }
@@ -44,6 +42,22 @@ func GetKrTicker(c *gin.Context) {
 // @Produce json
 // @Router /ticker/kr/trend [get]
 // @Security BearerAuth
-func GetKrTickerTrend(c *gin.Context) {
+func GetKrTickerTrends(c *gin.Context) {
+	_, verifyErr := c.Keys["member"].(structs.AuthClaim)
+	if !verifyErr {
+		return
+	}
+	err := tickerservice.GetKrTickerTrends()
 
+	if err != nil {
+		fmt.Println(err)
+		res.BadRequest(c, "cannot get trends", 400)
+		return
+	}
+	res.Ok(
+		c,
+		"getting kr trends",
+		true,
+		200,
+	)
 }

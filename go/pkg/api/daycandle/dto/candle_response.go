@@ -1,4 +1,4 @@
-package structs
+package candleDto
 
 import (
 	"time"

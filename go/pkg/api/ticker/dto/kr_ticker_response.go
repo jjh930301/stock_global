@@ -1,4 +1,4 @@
-package structs
+package tickerDto
 
 type KrTicker struct {
 	Symbol    string `json:"ISU_SRT_CD"` // symbol

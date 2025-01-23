@@ -3,5 +3,7 @@ ControlPort 0.0.0.1:9051
 CookieAuthentication 0
 SafeSocks 1
 LongLivedPorts 443,80
-NewCircuitPeriod 120
-MaxCircuitDirtiness 120
+NewCircuitPeriod 30         # 새로운 회로 생성 주기를 줄여 더 자주 새 회로를 만듦
+MaxCircuitDirtiness 30      # 회로 "더러움"을 빠르게 처리해 새 회로를 자주 사용
+KeepalivePeriod 30          # 연결 유지 신호를 더 자주 보냄
+UseEntryGuards 0            # 초기 진입 노드를 고정하지 않음

@@ -7,13 +7,13 @@ import (
 	"sync"
 	"time"
 
+	candleDto "github.com/jjh930301/needsss_global/pkg/api/daycandle/dto"
 	"github.com/jjh930301/needsss_global/pkg/models"
 	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/structs"
 	"github.com/jjh930301/needsss_global/pkg/utils"
 )
 
-func GetDayCandle() bool {
+func GetDayCandle(before int16) bool {
 	tickers := repositories.TickerRepository{}.FindAll()
 	batchSize := 100
 
@@ -28,9 +28,9 @@ func GetDayCandle() bool {
 		var innerWg sync.WaitGroup
 		for _, ticker := range batch {
 			innerWg.Add(1)
-			go func(t models.TickerModel) {
+			go func(t models.Ticker) {
 				defer innerWg.Done()
-				GetTickerChartsAndInsert(t.Symbol, t.ReutersCode, -300)
+				GetTickerChartsAndInsert(t.Symbol, t.ReutersCode, before)
 			}(ticker)
 		}
 		innerWg.Wait()
@@ -55,8 +55,9 @@ func GetTickerChartsAndInsert(
 		return
 	}
 	defer resp.Body.Close()
-	var dayCandleRes []structs.CandleResponse
+	var dayCandleRes []candleDto.CandleResponse
 	if err := json.NewDecoder(resp.Body).Decode(&dayCandleRes); err != nil {
+		// GetTickerChartsAndInsert(ticker, reuterCode, day)
 		fmt.Println(err)
 		return
 	}

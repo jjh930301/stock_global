@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
+	tickerDto "github.com/jjh930301/needsss_global/pkg/api/ticker/dto"
 	"github.com/jjh930301/needsss_global/pkg/models"
 	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/structs"
 	"github.com/jjh930301/needsss_global/pkg/utils"
 	"github.com/shopspring/decimal"
 )
@@ -26,16 +26,16 @@ func GetTicker(page int) (int, error) {
 	}
 	defer resp.Body.Close()
 
-	var stockRes structs.TickerResponse
+	var stockRes tickerDto.TickerResponse
 	if err := json.NewDecoder(resp.Body).Decode(&stockRes); err != nil {
 		fmt.Println(err)
 	}
-	var tickers []models.TickerModel
+	var tickers []models.Ticker
 	for _, stock := range stockRes.Stocks {
 		value := strings.ReplaceAll(stock.MarketValue, ",", "")
 
 		marketValue, _ := decimal.NewFromString(value)
-		ticker := models.TickerModel{
+		ticker := models.Ticker{
 			Symbol:       stock.SymbolCode,
 			StockType:    stock.StockType,
 			NationType:   stock.NationType,
