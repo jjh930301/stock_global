@@ -34,7 +34,7 @@ services:
         limits:
           memory: 128m
           cpus: "0.25"
-    restart: always
+    restart: unless-stopped
   tor2:
     image: dperson/torproxy
     container_name: tor2
@@ -44,6 +44,11 @@ services:
       - "5354:5353"
     volumes:
       - ./tor/torrc:/etc/tor/torrc
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: "0.25"
   tor3:
     image: dperson/torproxy
     container_name: tor3
@@ -58,7 +63,7 @@ services:
         limits:
           memory: 128m
           cpus: "0.25"
-    restart: always
+    restart: unless-stopped
   redis-master:
     image: redis:7-alpine
     container_name: redis-master

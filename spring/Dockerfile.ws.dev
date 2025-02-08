@@ -1,0 +1,14 @@
+# Dockerfile.dev
+FROM gradle:8.5-jdk21
+
+WORKDIR /wsapp
+
+COPY ws /wsapp/ws
+COPY core /wsapp/core
+COPY build.gradle /wsapp/
+COPY settings.gradle /wsapp/
+
+RUN gradle dependencies --no-daemon || true
+
+EXPOSE 8100
+ENTRYPOINT ["sh", "-c", "(gradle ws:build -x test --continuous) & (gradle core:build -x test --continuous) & gradle ws:bootRun -Dspring.profiles.active=dev"]

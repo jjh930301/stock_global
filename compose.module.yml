@@ -1,4 +1,4 @@
-version: "3"
+version: "3.12"
 services:
   gocron:
     build:
@@ -14,24 +14,44 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.5"
-          memory: "512M"
+          cpus: "4"
+          memory: 512M
         reservations:
-          cpus: "0.5"
-          memory: "256M"
+          cpus: "1"
+          memory: 256M
     env_file:
       - ./.env
     volumes:
       - ./go:/app
       - /tmp/mysqld:/run/mysqld
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck || exit 1"]
+      interval: 10s
+      timeout: 2s
+      retries: 1
+      start_period: 10s
+      start_interval: 5s
   springapi:
     build:
       context: "./spring"
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.api.dev
     container_name: springapi
     restart: always
     ports:
       - 8090:8090
+    env_file:
+      - ./.env
+    volumes:
+      - "./spring:/app"
+      - "./spring/build:/app/build"
+  ws:
+    build:
+      context: "./spring"
+      dockerfile: Dockerfile.ws.dev
+    container_name: ws
+    restart: always
+    ports:
+      - 8100:8100
     env_file:
       - ./.env
     volumes:

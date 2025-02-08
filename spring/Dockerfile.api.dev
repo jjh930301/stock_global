@@ -11,4 +11,4 @@ COPY settings.gradle /app/
 RUN gradle dependencies --no-daemon || true
 
 EXPOSE 8090
-ENTRYPOINT ["sh", "-c", "(gradle build -x test --continuous) & gradle api:bootRun -Dspring.profiles.active=dev"]
+ENTRYPOINT ["sh", "-c", "(gradle api:build -x test --continuous) & (gradle core:build -x test --continuous)  & gradle api:bootRun -Dspring.profiles.active=dev"]
