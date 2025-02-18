@@ -64,6 +64,50 @@ services:
           memory: 128m
           cpus: "0.25"
     restart: unless-stopped
+  tor4:
+    image: dperson/torproxy
+    container_name: tor4
+    ports:
+      - "9056:9050"
+      - "9057:9051"
+      - "5356:5353"
+    volumes:
+      - ./tor/torrc:/etc/tor/torrc
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: "0.25"
+    restart: unless-stopped
+  tor5:
+    image: dperson/torproxy
+    container_name: tor5
+    ports:
+      - "9058:9050"
+      - "9059:9051"
+      - "5357:5353"
+    volumes:
+      - ./tor/torrc:/etc/tor/torrc
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: "0.25"
+  tor6:
+    image: dperson/torproxy
+    container_name: tor6
+    ports:
+      - "9060:9050"
+      - "9061:9051"
+      - "5358:5353"
+    volumes:
+      - ./tor/torrc:/etc/tor/torrc
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: "0.25"
+    restart: unless-stopped
   redis-master:
     image: redis:7-alpine
     container_name: redis-master
@@ -71,7 +115,12 @@ services:
       - "6379:6379"
     volumes:
       - ./redis/master.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf
+      - ./redis/entrypoint.sh:/usr/local/entrypoint.sh
+    entrypoint: [sh, "/usr/local/entrypoint.sh"]
+    depends_on:
+      - redis-node1
+      - redis-node2
+
   redis-node1:
     image: redis:7-alpine
     container_name: redis-node1
@@ -79,7 +128,7 @@ services:
       - "6380:6379"
     volumes:
       - ./redis/node.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
 
   redis-node2:
     image: redis:7-alpine
@@ -88,31 +137,52 @@ services:
       - "6381:6379"
     volumes:
       - ./redis/node.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
 
   sentinel1:
     image: redis:7-alpine
     container_name: sentinel1
+    env_file:
+      - ./.env
     ports:
       - "26379:26379"
     volumes:
       - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
-    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
+      - ./redis/sentinel-entrypoint.sh:/usr/local/sentinel-entrypoint.sh
+    depends_on:
+      - redis-master
+      - redis-node1
+      - redis-node2
+    entrypoint: ["sh", "/usr/local/sentinel-entrypoint.sh"]
 
   sentinel2:
     image: redis:7-alpine
     container_name: sentinel2
+    env_file:
+      - ./.env
     ports:
       - "26380:26379"
     volumes:
       - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
-    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
+      - ./redis/sentinel-entrypoint.sh:/usr/local/sentinel-entrypoint.sh
+    depends_on:
+      - redis-master
+      - redis-node1
+      - redis-node2
+    entrypoint: ["sh", "/usr/local/sentinel-entrypoint.sh"]
 
   sentinel3:
     image: redis:7-alpine
     container_name: sentinel3
+    env_file:
+      - ./.env
     ports:
       - "26381:26379"
     volumes:
       - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
-    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
+      - ./redis/sentinel-entrypoint.sh:/usr/local/sentinel-entrypoint.sh
+    depends_on:
+      - redis-master
+      - redis-node1
+      - redis-node2
+    entrypoint: ["sh", "/usr/local/sentinel-entrypoint.sh"]

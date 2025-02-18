@@ -13,6 +13,9 @@ var (
 		"tor1:9050",
 		"tor2:9050",
 		"tor3:9050",
+		"tor4:9050",
+		"tor5:9050",
+		"tor6:9050",
 	}
 	proxyIndex int
 	mu         sync.Mutex

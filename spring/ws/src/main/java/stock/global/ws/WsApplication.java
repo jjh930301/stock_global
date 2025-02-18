@@ -4,7 +4,17 @@ import java.util.Collections;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
 
+import stock.global.core.config.RedisConfig;
+import stock.global.core.config.SecurityConfig;
+import stock.global.core.util.JwtUtil;
+
+@Import({
+	RedisConfig.class,
+	SecurityConfig.class,
+	JwtUtil.class
+})
 @SpringBootApplication
 public class WsApplication {
 
@@ -14,7 +24,7 @@ public class WsApplication {
 			Collections.singletonMap(
 				"server.port", 
 				System.getenv("WS_PORT") == null 
-					? "8090" 
+					? "8100" 
 					: System.getenv("WS_PORT")
 			)
 		);

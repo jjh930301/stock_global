@@ -38,10 +38,12 @@ public class SecurityConfig{
 	public DefaultSecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-			.csrf(csrf -> csrf.disable())
+			.csrf(csrf -> csrf.ignoringRequestMatchers("/ws/**").disable())
 			.authorizeHttpRequests(authorizeRequests ->
 				authorizeRequests
 					.requestMatchers("/h2-console/**")
+					.permitAll()
+					.requestMatchers("/**")
 					.permitAll()
 					.anyRequest()
 					.permitAll()

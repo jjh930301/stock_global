@@ -1,4 +1,4 @@
-package daycandleservice
+package dayCandleService
 
 import (
 	"encoding/json"
@@ -13,10 +13,11 @@ import (
 	"github.com/jjh930301/needsss_global/pkg/utils"
 )
 
-func GetDayCandle(before int16) bool {
+func GetDayCandle(before int) bool {
 	tickers := repositories.TickerRepository{}.FindAll()
+	startTime := time.Now().AddDate(0, 0, before).In(utils.KrTime()).Format("20060102")
+	now := time.Now().In(utils.KrTime()).Format("20060102")
 	batchSize := 100
-
 	for i := 0; i < len(tickers); i += batchSize {
 		end := i + batchSize
 		if end > len(tickers) {
@@ -26,19 +27,20 @@ func GetDayCandle(before int16) bool {
 		batch := tickers[i:end]
 
 		var innerWg sync.WaitGroup
-		for _, ticker := range batch {
+		for _, krTicker := range batch {
 			innerWg.Add(1)
 			go func(t models.Ticker) {
 				defer innerWg.Done()
-				GetTickerChartsAndInsert(t.Symbol, t.ReutersCode, before)
-			}(ticker)
+				FetchKrCandle(t.Symbol, startTime, now)
+			}(krTicker)
 		}
 		innerWg.Wait()
 	}
+
 	return true
 }
 
-func GetTickerChartsAndInsert(
+func FetchTickerChartsAndInsert(
 	ticker string,
 	reuterCode string,
 	day int16,
@@ -51,16 +53,30 @@ func GetTickerChartsAndInsert(
 	client := utils.TorClient()
 	resp, err := client.Get(url)
 	if err != nil {
-		fmt.Println("tor error", err)
+		go FetchTickerChartsAndInsert(ticker, reuterCode, day)
 		return
 	}
 	defer resp.Body.Close()
 	var dayCandleRes []candleDto.CandleResponse
 	if err := json.NewDecoder(resp.Body).Decode(&dayCandleRes); err != nil {
-		// GetTickerChartsAndInsert(ticker, reuterCode, day)
-		fmt.Println(err)
+		go FetchTickerChartsAndInsert(ticker, reuterCode, day)
 		return
 	}
 
-	repositories.DayCandleRepository{}.BulkDuplicateKeyInsert(ticker, dayCandleRes)
+	var dayCandles []models.DayCandle
+	for _, candle := range dayCandleRes {
+		t, _ := candle.ToTime()
+		dayCandle := models.DayCandle{
+			Symbol: ticker,
+			Date:   t,
+			Open:   candle.OpenPrice,
+			Close:  candle.ClosePrice,
+			High:   candle.HighPrice,
+			Low:    candle.LowPrice,
+			Volume: candle.AccumulatedTradingVolume,
+		}
+		dayCandles = append(dayCandles, dayCandle)
+	}
+
+	repositories.DayCandleRepository{}.BulkDuplicateKeyInsert(ticker, dayCandles)
 }

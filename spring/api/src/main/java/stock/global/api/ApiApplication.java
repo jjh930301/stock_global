@@ -11,6 +11,7 @@ import stock.global.core.aop.RateLimitAspect;
 import stock.global.core.config.JpaConfig;
 import stock.global.core.config.MybatisConfig;
 import stock.global.core.config.QueryDslConfig;
+import stock.global.core.config.RedisConfig;
 import stock.global.core.config.SecurityConfig;
 import stock.global.core.config.SmtpConfig;
 import stock.global.core.config.SwaggerConfig;
@@ -35,7 +36,8 @@ import stock.global.core.util.StringUtil;
 	TokenRoleResolver.class,
 	SmtpConfig.class,
 	RateLimitAspect.class,
-	StringUtil.class
+	StringUtil.class,
+	RedisConfig.class
 })
 @EnableJpaAuditing
 public class ApiApplication {

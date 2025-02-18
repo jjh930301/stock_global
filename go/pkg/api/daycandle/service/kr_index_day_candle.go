@@ -6,65 +6,29 @@ import (
 	"io"
 	"os"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/jjh930301/needsss_global/pkg/models"
+	r "github.com/jjh930301/needsss_global/pkg/redis"
 	"github.com/jjh930301/needsss_global/pkg/repositories"
 	"github.com/jjh930301/needsss_global/pkg/utils"
+	"github.com/redis/go-redis/v9"
 	"github.com/shopspring/decimal"
 )
 
-const (
-	DATE   = 0
-	OPEN   = 1
-	HIGH   = 2
-	LOW    = 3
-	CLOSE  = 4
-	VOLUME = 5
-)
-
-func GetKrDayCandle(before int) bool {
-	krTickers := repositories.KrTickerRepository{}.FindAll()
-	startTime := time.Now().AddDate(0, 0, before).In(utils.KrTime()).Format("20060102")
-	now := time.Now().In(utils.KrTime()).Format("20060102")
-	batchSize := 100
-	for i := 0; i < len(krTickers); i += batchSize {
-		end := i + batchSize
-		if end > len(krTickers) {
-			end = len(krTickers)
-		}
-
-		batch := krTickers[i:end]
-
-		var innerWg sync.WaitGroup
-		for _, krTicker := range batch {
-			innerWg.Add(1)
-			go func(t models.KrTicker) {
-				defer innerWg.Done()
-				FetchKrCandle(t.Symbol, startTime, now)
-			}(krTicker)
-		}
-		innerWg.Wait()
-	}
-
-	return true
-}
-
-func FetchKrCandle(symbol, startTime, endTime string) {
+func FetchKrIndexDayCandle(market, startTime, endTime string) {
 	url := fmt.Sprintf(
-		os.Getenv("KR_CHART_URL"),
-		symbol,
+		os.Getenv("KR_INDEX_URL"),
+		market,
 		startTime,
 		endTime,
-		"day",
 	)
 	client := utils.TorClient()
 	res, err := client.Get(url)
 
 	if err != nil {
 
-		go FetchKrCandle(symbol, startTime, endTime)
+		go FetchKrCandle(market, startTime, endTime)
 		return
 	}
 
@@ -72,7 +36,7 @@ func FetchKrCandle(symbol, startTime, endTime string) {
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		go FetchKrCandle(symbol, startTime, endTime)
+		go FetchKrCandle(market, startTime, endTime)
 		return
 	}
 
@@ -80,14 +44,13 @@ func FetchKrCandle(symbol, startTime, endTime string) {
 	replaceNewLine := strings.ReplaceAll(replaceTap, "\n", "")
 	replaceSpace := strings.ReplaceAll(replaceNewLine, " ", "")
 	stringify := strings.ReplaceAll(replaceSpace, "'", "\"")
-
 	var arr [][]interface{}
 	err = json.Unmarshal([]byte(stringify), &arr)
 	if err != nil {
-		go FetchKrCandle(symbol, startTime, endTime)
+		go FetchKrCandle(market, startTime, endTime)
 		return
 	}
-	var krDayCandles []models.KrDayCandle
+	var krIndexDayCandles []models.KrIndexDayCandle
 	for i, candle := range arr {
 		if i == 0 {
 			continue
@@ -114,9 +77,14 @@ func FetchKrCandle(symbol, startTime, endTime string) {
 		} else {
 			high = decimal.NewFromFloat(candle[HIGH].(float64))
 		}
-
-		krDayCandle := models.KrDayCandle{
-			Symbol: symbol,
+		var marketId int16
+		if market == "KOSPI" {
+			marketId = 1
+		} else {
+			marketId = 2
+		}
+		krDayCandle := models.KrIndexDayCandle{
+			Market: marketId,
 			Date:   datetime,
 			Open:   open,
 			High:   high,
@@ -124,23 +92,23 @@ func FetchKrCandle(symbol, startTime, endTime string) {
 			Close:  close,
 			Volume: int64(candle[VOLUME].(float64)),
 		}
-		krDayCandles = append(krDayCandles, krDayCandle)
+		krIndexDayCandles = append(krIndexDayCandles, krDayCandle)
 	}
-	_ = repositories.KrDayCandleRepository{}.BulkDuplicatKeyInsert(krDayCandles)
+	_ = repositories.KrIndexDayCandleRepository{}.BulkDuplicatKeyInsert(krIndexDayCandles)
 	// redis stream
-	// json, err := json.Marshal(krDayCandles)
-	// if err != nil {
-	// 	return
-	// }
-	// _, err = r.Client.XAdd(r.RedisCtx, &redis.XAddArgs{
-	// 	Stream: "krDayCandleStream",
-	// 	Values: map[string]interface{}{
-	// 		"data": string(json),
-	// 	},
-	// }).Result()
+	json, err := json.Marshal(krIndexDayCandles)
+	if err != nil {
+		return
+	}
+	_, err = r.Client.XAdd(r.RedisCtx, &redis.XAddArgs{
+		Stream: "krIndexDayCandleStream",
+		Values: map[string]interface{}{
+			"data": string(json),
+		},
+	}).Result()
 
-	// if err != nil {
-	// 	fmt.Printf("Redis Stream Push Error: %v\n", err)
-	// 	return
-	// }
+	if err != nil {
+		fmt.Printf("Redis Stream Push Error: %v\n", err)
+		return
+	}
 }

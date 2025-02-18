@@ -24,8 +24,15 @@ repositories {
 dependencies {
 	implementation project(":core")
 	testImplementation project(":core")
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+bootRun() {
+	systemProperty "spring.profiles.active", project.findProperty("spring.profiles.active") ?: "dev"
+    mainClass = "stock.global.ws.WsApplication"
 }

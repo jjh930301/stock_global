@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -24,6 +25,7 @@ public class RedisConfig {
                 System.getenv("REDIS_NODE2")
             )
         );
+        clusterConfig.setPassword(RedisPassword.of(System.getenv("REDIS_PASSWORD")));
         return new LettuceConnectionFactory(clusterConfig);
     }
 

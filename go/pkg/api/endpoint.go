@@ -5,4 +5,5 @@ const (
 	HealthCheck = "/healthcheck"
 	Kr          = "/kr"
 	Trend       = "/trend"
+	Index       = "/index"
 )

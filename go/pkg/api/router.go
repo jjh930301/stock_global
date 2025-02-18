@@ -20,8 +20,7 @@ func Router() *gin.Engine {
 		}))
 	}
 	r.GET("/healthcheck", func(c *gin.Context) {
-		clientIP := c.ClientIP()
-		c.JSON(http.StatusOK, gin.H{"ip": clientIP})
+		c.JSON(http.StatusOK, gin.H{"ip": c.ClientIP()})
 	})
 	ticker := r.Group("/ticker")
 	{
@@ -31,6 +30,7 @@ func Router() *gin.Engine {
 		daycandle := ticker.Group("/daycandle")
 		{
 			daycandle.GET(Kr, utils.Authenticator, daycandleController.GetKrDayCandle)
+			daycandle.GET(fmt.Sprintf("%s%s", Kr, Index), utils.Authenticator, daycandleController.GetKrIndexDayCandle)
 			daycandle.GET(Default, utils.Authenticator, daycandleController.GetDayCandle)
 		}
 	}

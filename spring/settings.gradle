@@ -1,4 +1,4 @@
-rootProject.name = "spring"
+rootProject.name = "stock"
 
 include ":api"
 include ":core"

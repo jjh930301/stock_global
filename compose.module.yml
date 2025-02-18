@@ -1,4 +1,4 @@
-version: "3.12"
+version: "3.8"
 services:
   gocron:
     build:
@@ -24,13 +24,6 @@ services:
     volumes:
       - ./go:/app
       - /tmp/mysqld:/run/mysqld
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck || exit 1"]
-      interval: 10s
-      timeout: 2s
-      retries: 1
-      start_period: 10s
-      start_interval: 5s
   springapi:
     build:
       context: "./spring"
@@ -42,8 +35,9 @@ services:
     env_file:
       - ./.env
     volumes:
-      - "./spring:/app"
-      - "./spring/build:/app/build"
+      - "./spring/api:/app/api"
+      - "/api/api_gradle" # Gradle cache
+      - "./spring/api/.gradle:/app/api/.gradle"
   ws:
     build:
       context: "./spring"
@@ -55,5 +49,6 @@ services:
     env_file:
       - ./.env
     volumes:
-      - "./spring:/app"
-      - "./spring/build:/app/build"
+      - "./spring/ws:/wsapp/ws"
+      - "/ws/ws_gradle" # Gradle cache
+      - "./spring/ws/.gradle:/wsapp/ws/.gradle"

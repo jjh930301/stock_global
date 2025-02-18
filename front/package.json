@@ -9,16 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@canvasjs/react-charts": "^1.0.2",
     "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^6.1.7",
     "@mui/material-nextjs": "^6.1.7",
+    "axios": "^1.7.9",
     "next": "15.0.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "zustand": "^5.0.1",
-    "axios": "^1.7.9"
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
