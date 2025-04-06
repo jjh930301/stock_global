@@ -14,7 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import stock.global.api.domain.auth.dto.MemberDto;
 import stock.global.api.domain.auth.service.AuthService;
@@ -22,21 +26,20 @@ import stock.global.api.repositories.MemberRepository;
 import stock.global.core.entities.Member;
 import stock.global.core.enums.MemberTypeEnum;
 import stock.global.core.exceptions.ApiException;
-import stock.global.core.util.JwtUtil;
 
+
+@ActiveProfiles("test") 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AuthServiceTest {
     
     @Mock
     private MemberRepository memberRepository;
 
     @Mock
-    private JwtUtil jwtUtil;
-
-    @Mock
     private BCryptPasswordEncoder bcryptEncoder;
 
     @InjectMocks
-    private AuthService authservice;
+    private AuthService authService;
 
     final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     final PrintStream standardOut = System.out;
@@ -52,28 +55,32 @@ public class AuthServiceTest {
         System.setOut(standardOut);
     }
 
-    @DisplayName("로그인")
+    @DisplayName("로그인 실패 - 비밀번호 불일치")
     @Test
     void testLoginMember() {
+        // given
         MemberDto dto = new MemberDto(
             "loginUser",
-            "encodedpassword"
+            "rawPassword"
         );
-        String password = bcryptEncoder.encode(dto.getAccountPassword());
+
+        // Member 객체의 실제 저장된 비밀번호는 "encodedWrongPassword"라고 가정
         Member memberEntity = new Member(
             dto.getAccountId(), 
-            bcryptEncoder.encode("wrongpassword"), 
+            "encodedWrongPassword", 
             MemberTypeEnum.USER
         );
-        this.memberRepository.save(memberEntity);
-        when(this.memberRepository.findByAccountId("loginUser")).thenReturn(Optional.of(memberEntity));
 
-        when(this.bcryptEncoder.matches("wrongpassword", password)).thenReturn(false);
-    
+        // when - Mock 설정
+        when(memberRepository.findByAccountId("loginUser")).thenReturn(Optional.of(memberEntity));
+        when(bcryptEncoder.matches("rawPassword", "encodedWrongPassword")).thenReturn(false);
+
+        // then - 예외 발생 검증
         ApiException exception = Assertions.assertThrows(ApiException.class, () -> {
-            this.authservice.loginMember(dto , "ipaddress");
+            authService.loginMember(dto , "127.0.0.1");
         });
-    
+
         assertEquals("check account id and password", exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
     }
 }

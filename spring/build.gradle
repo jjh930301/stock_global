@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.3.4' apply false
+    id 'org.springframework.boot' version '3.2.3'
     id 'io.spring.dependency-management' version '1.1.6'
 }
 
@@ -49,6 +49,10 @@ subprojects {
 	    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	    compileOnly 'org.projectlombok:lombok'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        testImplementation 'org.mockito:mockito-core'
+        testImplementation 'org.mockito:mockito-junit-jupiter'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     }
 
     test {
@@ -61,7 +65,7 @@ project(':api') {
 		archivesBaseName = 'api'
 	}
 	dependencies {
-		compileOnly project(':core')
+		implementation project(':core')
 	}
 }
 

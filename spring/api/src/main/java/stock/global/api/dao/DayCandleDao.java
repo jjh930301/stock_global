@@ -9,7 +9,7 @@ import stock.global.api.domain.daycandle.dto.AvgLineDto;
 import stock.global.api.domain.daycandle.dto.IchimokuDto;
 
 @Mapper
-public interface DayCandleDao {
+public interface DayCandleDao{
     List<HashMap<String , Object>> findAvgTickers(AvgLineDto dto);
     List<HashMap<String , Object>> findIchimokuTickers(IchimokuDto dto);
 }

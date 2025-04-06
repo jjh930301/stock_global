@@ -7,6 +7,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
+import stock.global.ws.handler.DayCandleHandler;
 import stock.global.ws.handler.IndexDayCandleHandler;
 
 
@@ -15,21 +16,23 @@ import stock.global.ws.handler.IndexDayCandleHandler;
 @EnableRedisHttpSession
 public class WsConfig implements WebSocketConfigurer{
 
-    private final HandshakeInterceptor handshakeInterceptor;
     private final IndexDayCandleHandler indexDayCandleHandler;
+    private final DayCandleHandler dayCandleHandler;
 
     public WsConfig(
         HandshakeInterceptor handshakeInterceptor,
-        IndexDayCandleHandler indexDayCandleHandler
+        IndexDayCandleHandler indexDayCandleHandler,
+        DayCandleHandler dayCandleHandler
     ) {
         this.indexDayCandleHandler = indexDayCandleHandler;
-        this.handshakeInterceptor = handshakeInterceptor;
+        this.dayCandleHandler = dayCandleHandler;
     }
 
     @Override
     public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
-        registry.addHandler(indexDayCandleHandler, "/{token}")
-            .addInterceptors(handshakeInterceptor)
+        registry.addHandler(indexDayCandleHandler, "/index")
+            .setAllowedOriginPatterns("http://localhost:3000", "ws://localhost:3000");
+        registry.addHandler(dayCandleHandler, "/")
             .setAllowedOriginPatterns("http://localhost:3000", "ws://localhost:3000");
     }
 }

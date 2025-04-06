@@ -4,6 +4,7 @@ import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStreamCommands;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import stock.global.core.constants.Constant;
 import stock.global.ws.listener.KrIndexListener;
 
+@Profile("!test")
 @Slf4j
 @Configuration
 public class RedisStreamConfig {

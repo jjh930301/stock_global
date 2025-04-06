@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -15,6 +16,19 @@ import stock.global.core.models.ApiRes;
 
 @RestControllerAdvice
 public class GlobalException {
+
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	public ResponseEntity<ApiRes<?>> missingReqParam(PersistenceException e) {
+		return ResponseEntity
+			.status(HttpStatus.BAD_REQUEST)
+			.body(
+				ApiRes
+					.builder()
+					.payload(null)
+					.messages(List.of(e.getMessage()))
+					.build()	
+			);
+	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiRes<?>> methodArgException(MethodArgumentNotValidException e) {
