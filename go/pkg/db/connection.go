@@ -26,7 +26,6 @@ func connection(user, password, host, database string) *gorm.DB {
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
-		fmt.Println("error:::", err)
 		panic(err)
 	}
 	db.Set("gorm:table_options", "ENGINE=InnoDB")

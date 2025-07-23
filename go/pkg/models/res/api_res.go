@@ -7,23 +7,23 @@ import (
 )
 
 type ResponseModel struct {
-	Messages   []string    `json:"messages"`
-	ResultCode int         `json:"result_code"`
-	Payload    interface{} `json:"payload"`
+	Messages []string    `json:"messages"`
+	Status   int         `json:"status"`
+	Payload  interface{} `json:"payload"`
 }
 
 func Ok(
 	c *gin.Context,
 	message string,
 	payload interface{},
-	resultCode int,
+	status int,
 ) {
 	var messages []string = []string{message}
 
 	model := ResponseModel{
-		Messages:   messages,
-		Payload:    &payload,
-		ResultCode: resultCode,
+		Messages: messages,
+		Payload:  &payload,
+		Status:   status,
 	}
 	c.JSON(http.StatusOK, model)
 }
@@ -32,14 +32,14 @@ func Created(
 	c *gin.Context,
 	message string,
 	payload interface{},
-	resultCode int,
+	status int,
 ) {
 	var messages []string = []string{message}
 
 	model := ResponseModel{
-		Messages:   messages,
-		Payload:    &payload,
-		ResultCode: resultCode,
+		Messages: messages,
+		Payload:  &payload,
+		Status:   status,
 	}
 	c.JSON(http.StatusCreated, model)
 
@@ -48,7 +48,7 @@ func Created(
 func BadRequest(
 	c *gin.Context,
 	message string,
-	resultCode int,
+	status int,
 ) {
 	var messages []string = []string{message}
 	model := ResponseModel{
@@ -56,7 +56,7 @@ func BadRequest(
 		Payload: gin.H{
 			"reuslt": nil,
 		},
-		ResultCode: resultCode,
+		Status: status,
 	}
 	c.JSON(http.StatusBadRequest, model)
 
@@ -71,7 +71,7 @@ func Unauthorized(
 		Payload: gin.H{
 			"reuslt": nil,
 		},
-		ResultCode: 4101,
+		Status: 4101,
 	}
 	c.JSON(http.StatusUnauthorized, model)
 
@@ -80,7 +80,7 @@ func Unauthorized(
 func Forbidden(
 	c *gin.Context,
 	message string,
-	resultCode int,
+	status int,
 ) {
 	var messages []string = []string{"Cannot Access " + message}
 	model := ResponseModel{
@@ -88,7 +88,7 @@ func Forbidden(
 		Payload: gin.H{
 			"reuslt": nil,
 		},
-		ResultCode: resultCode,
+		Status: status,
 	}
 	c.JSON(http.StatusForbidden, model)
 
@@ -98,8 +98,8 @@ func ServerError(c *gin.Context) {
 	var messages []string = []string{"server error"}
 
 	model := ResponseModel{
-		Messages:   messages,
-		ResultCode: 5000,
+		Messages: messages,
+		Status:   5000,
 		Payload: gin.H{
 			"reuslt": nil,
 		},

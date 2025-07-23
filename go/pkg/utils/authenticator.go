@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jjh930301/needsss_global/pkg/models/res"
-	"github.com/jjh930301/needsss_global/pkg/structs"
+	"github.com/jjh930301/stock_global/pkg/models/res"
+	"github.com/jjh930301/stock_global/pkg/structs"
 )
 
 func extractToken(r *http.Request) string {

@@ -3,15 +3,15 @@ package scheduler
 import (
 	"time"
 
-	dayCandleService "github.com/jjh930301/needsss_global/pkg/api/daycandle/service"
-	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	dayCandleService "github.com/jjh930301/stock_global/pkg/api/daycandle/service"
+	"github.com/jjh930301/stock_global/pkg/repositories"
+	"github.com/jjh930301/stock_global/pkg/utils"
 )
 
 func WeekDayCandle() {
 	tickers := repositories.TickerRepository{}.FindAll()
 	for _, ticker := range tickers {
-		go dayCandleService.FetchTickerChartsAndInsert(ticker.Symbol, ticker.ReutersCode, -10)
+		go dayCandleService.FetchTickerChartsAndInsert(ticker.Symbol, ticker.ReutersCode, ticker.MarKetType, -10)
 	}
 }
 

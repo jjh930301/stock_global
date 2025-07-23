@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/go-co-op/gocron"
-	dayCandleService "github.com/jjh930301/needsss_global/pkg/api/daycandle/service"
-	tickerservice "github.com/jjh930301/needsss_global/pkg/api/ticker/service"
-	"github.com/jjh930301/needsss_global/pkg/cron/scheduler"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	dayCandleService "github.com/jjh930301/stock_global/pkg/api/daycandle/service"
+	tickerservice "github.com/jjh930301/stock_global/pkg/api/ticker/service"
+	"github.com/jjh930301/stock_global/pkg/cron/scheduler"
+	"github.com/jjh930301/stock_global/pkg/utils"
 )
 
 func bToMb(b uint64) uint64 {
@@ -28,6 +28,13 @@ func GoCron() *gocron.Scheduler {
 	s.Every(1).Day().At("1:00").Do(scheduler.TickerCron)
 	// update day_candles
 	s.Days().Every(5).Seconds().Do(func() {
+		var m runtime.MemStats
+		runtime.ReadMemStats(&m)
+		fmt.Println(bToMb(m.Alloc) < 50, bToMb(m.Alloc))
+		if bToMb(m.Alloc) > 50 {
+			return
+		}
+
 		now := time.Now()
 		isWithinTime := now.Hour() >= 13 && now.Hour() < 21
 
@@ -58,8 +65,8 @@ func GoCron() *gocron.Scheduler {
 		}
 		var m runtime.MemStats
 		runtime.ReadMemStats(&m)
-		fmt.Println(isWithinTime, bToMb(m.Alloc))
-		if bToMb(m.Alloc) > 150 {
+		fmt.Println(bToMb(m.Alloc) < 50, bToMb(m.Alloc))
+		if bToMb(m.Alloc) > 50 {
 			return
 		}
 

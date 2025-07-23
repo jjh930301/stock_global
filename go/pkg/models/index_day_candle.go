@@ -7,7 +7,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-type KrIndexDayCandle struct {
+type IndexDayCandle struct {
 	Market int16           `gorm:"column:market;type:tinyint;primary_key" json:"market,omitempty"`
 	Date   time.Time       `gorm:"column:date;type:date;primary_key;index" json:"date,omitempty"`
 	Open   decimal.Decimal `gorm:"column:open;type:decimal(11,3)" json:"open,omitempty"`
@@ -17,6 +17,6 @@ type KrIndexDayCandle struct {
 	Volume int64           `gorm:"column:volume;type:bigint;not null" json:"volume,omitempty"`
 }
 
-func (KrIndexDayCandle) TableName() string {
-	return constant.KrIndexDayCandle
+func (IndexDayCandle) TableName() string {
+	return constant.IndexDayCandle
 }

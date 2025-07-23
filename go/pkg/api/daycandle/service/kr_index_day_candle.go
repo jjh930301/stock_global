@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jjh930301/needsss_global/pkg/models"
-	r "github.com/jjh930301/needsss_global/pkg/redis"
-	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	"github.com/jjh930301/stock_global/pkg/models"
+	r "github.com/jjh930301/stock_global/pkg/redis"
+	"github.com/jjh930301/stock_global/pkg/repositories"
+	"github.com/jjh930301/stock_global/pkg/utils"
 	"github.com/redis/go-redis/v9"
 	"github.com/shopspring/decimal"
 )

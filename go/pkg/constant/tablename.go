@@ -1,6 +1,7 @@
 package constant
 
 const (
+	IndexDayCandle   = "index_day_candles"
 	Ticker           = "tickers"
 	DayCandle        = "day_candles"
 	Member           = "members"

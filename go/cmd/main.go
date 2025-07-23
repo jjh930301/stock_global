@@ -4,12 +4,12 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	api "github.com/jjh930301/needsss_global/pkg/api"
-	"github.com/jjh930301/needsss_global/pkg/cron"
-	"github.com/jjh930301/needsss_global/pkg/db"
-	"github.com/jjh930301/needsss_global/pkg/docs"
-	"github.com/jjh930301/needsss_global/pkg/models"
-	"github.com/jjh930301/needsss_global/pkg/redis"
+	api "github.com/jjh930301/stock_global/pkg/api"
+	"github.com/jjh930301/stock_global/pkg/cron"
+	"github.com/jjh930301/stock_global/pkg/db"
+	"github.com/jjh930301/stock_global/pkg/docs"
+	"github.com/jjh930301/stock_global/pkg/models"
+	"github.com/jjh930301/stock_global/pkg/redis"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	// _ "github.com/swaggo/gin-swagger/example/basic/docs"
@@ -56,6 +56,7 @@ func main() {
 			// &models.KrTicker{},
 			// &models.KrDayCandle{},
 			// &models.KrTrend{},
+			&models.IndexDayCandle{},
 			&models.KrIndexDayCandle{},
 		)
 	}

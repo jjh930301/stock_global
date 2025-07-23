@@ -7,16 +7,14 @@ import (
 	"sync"
 	"time"
 
-	candleDto "github.com/jjh930301/needsss_global/pkg/api/daycandle/dto"
-	"github.com/jjh930301/needsss_global/pkg/models"
-	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	candleDto "github.com/jjh930301/stock_global/pkg/api/daycandle/dto"
+	"github.com/jjh930301/stock_global/pkg/models"
+	"github.com/jjh930301/stock_global/pkg/repositories"
+	"github.com/jjh930301/stock_global/pkg/utils"
 )
 
 func GetDayCandle(before int) bool {
 	tickers := repositories.TickerRepository{}.FindAll()
-	startTime := time.Now().AddDate(0, 0, before).In(utils.KrTime()).Format("20060102")
-	now := time.Now().In(utils.KrTime()).Format("20060102")
 	batchSize := 100
 	for i := 0; i < len(tickers); i += batchSize {
 		end := i + batchSize
@@ -31,7 +29,7 @@ func GetDayCandle(before int) bool {
 			innerWg.Add(1)
 			go func(t models.Ticker) {
 				defer innerWg.Done()
-				FetchKrCandle(t.Symbol, startTime, now)
+				FetchTickerChartsAndInsert(t.Symbol, t.ReutersCode, t.MarKetType, int16(before))
 			}(krTicker)
 		}
 		innerWg.Wait()
@@ -42,6 +40,7 @@ func GetDayCandle(before int) bool {
 
 func FetchTickerChartsAndInsert(
 	ticker string,
+	market string,
 	reuterCode string,
 	day int16,
 ) {
@@ -49,17 +48,17 @@ func FetchTickerChartsAndInsert(
 	b := time.Now().AddDate(0, 0, int(day))
 	before := b.Format("20060102")
 	now := time.Now().Format("20060102")
-	url := fmt.Sprintf(os.Getenv("CHART_URL"), reuterCode, before, now)
+	url := fmt.Sprintf(os.Getenv("CHART_URL"), reuterCode, market, before, now)
 	client := utils.TorClient()
 	resp, err := client.Get(url)
 	if err != nil {
-		go FetchTickerChartsAndInsert(ticker, reuterCode, day)
+		go FetchTickerChartsAndInsert(ticker, reuterCode, market, day)
 		return
 	}
 	defer resp.Body.Close()
 	var dayCandleRes []candleDto.CandleResponse
 	if err := json.NewDecoder(resp.Body).Decode(&dayCandleRes); err != nil {
-		go FetchTickerChartsAndInsert(ticker, reuterCode, day)
+		go FetchTickerChartsAndInsert(ticker, reuterCode, market, day)
 		return
 	}
 

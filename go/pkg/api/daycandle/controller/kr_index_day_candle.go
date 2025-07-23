@@ -4,10 +4,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	dayCandleService "github.com/jjh930301/needsss_global/pkg/api/daycandle/service"
-	"github.com/jjh930301/needsss_global/pkg/models/res"
-	"github.com/jjh930301/needsss_global/pkg/structs"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	dayCandleService "github.com/jjh930301/stock_global/pkg/api/daycandle/service"
+	"github.com/jjh930301/stock_global/pkg/models/res"
+	"github.com/jjh930301/stock_global/pkg/structs"
+	"github.com/jjh930301/stock_global/pkg/utils"
 )
 
 // @Tags dayCandle

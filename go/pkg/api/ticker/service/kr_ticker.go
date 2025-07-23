@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	tickerDto "github.com/jjh930301/needsss_global/pkg/api/ticker/dto"
-	"github.com/jjh930301/needsss_global/pkg/models"
-	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	tickerDto "github.com/jjh930301/stock_global/pkg/api/ticker/dto"
+	"github.com/jjh930301/stock_global/pkg/models"
+	"github.com/jjh930301/stock_global/pkg/repositories"
+	"github.com/jjh930301/stock_global/pkg/utils"
 	"github.com/shopspring/decimal"
 )
 
@@ -111,7 +111,7 @@ func GetKrTickerTrends() error {
 			innerWg.Add(1)
 			go func(t models.KrTicker) {
 				defer innerWg.Done()
-				fetchAndProcessTrendData(t.Symbol, "")
+				getTrendData(t.Symbol, "")
 			}(krTicker)
 		}
 		innerWg.Wait()
@@ -120,8 +120,8 @@ func GetKrTickerTrends() error {
 	return nil
 }
 
-func fetchAndProcessTrendData(ticker string, date string) {
-	client := utils.TorClient() // Tor 클라이언트 사용
+func getTrendData(ticker string, date string) {
+	client := utils.TorClient()
 	pageSize := 50
 	totalPages := 6
 	baseURL := os.Getenv("KR_TREND_URL")
@@ -177,7 +177,9 @@ func fetchAndProcessTrendData(ticker string, date string) {
 
 			trends = append(trends, krTrend)
 		}
-		date = krTrends[len(krTrends)-1].BizDate
+		if len(krTrends) != 0 {
+			date = krTrends[len(krTrends)-1].BizDate
+		}
 	}
 
 	repositories.KrTrendRepository{}.BulkDuplicateKeyInsert(trends)

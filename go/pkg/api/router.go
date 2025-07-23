@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	daycandleController "github.com/jjh930301/needsss_global/pkg/api/daycandle/controller"
-	tickerController "github.com/jjh930301/needsss_global/pkg/api/ticker/controller"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	daycandleController "github.com/jjh930301/stock_global/pkg/api/daycandle/controller"
+	tickerController "github.com/jjh930301/stock_global/pkg/api/ticker/controller"
+	"github.com/jjh930301/stock_global/pkg/utils"
 )
 
 func Router() *gin.Engine {

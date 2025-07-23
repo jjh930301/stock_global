@@ -9,9 +9,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jjh930301/needsss_global/pkg/models"
-	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	"github.com/jjh930301/stock_global/pkg/models"
+	r "github.com/jjh930301/stock_global/pkg/redis"
+	"github.com/jjh930301/stock_global/pkg/repositories"
+	"github.com/jjh930301/stock_global/pkg/utils"
+	"github.com/redis/go-redis/v9"
 	"github.com/shopspring/decimal"
 )
 
@@ -63,7 +65,6 @@ func FetchKrCandle(symbol, startTime, endTime string) {
 	res, err := client.Get(url)
 
 	if err != nil {
-
 		go FetchKrCandle(symbol, startTime, endTime)
 		return
 	}
@@ -128,19 +129,19 @@ func FetchKrCandle(symbol, startTime, endTime string) {
 	}
 	_ = repositories.KrDayCandleRepository{}.BulkDuplicatKeyInsert(krDayCandles)
 	// redis stream
-	// json, err := json.Marshal(krDayCandles)
-	// if err != nil {
-	// 	return
-	// }
-	// _, err = r.Client.XAdd(r.RedisCtx, &redis.XAddArgs{
-	// 	Stream: "krDayCandleStream",
-	// 	Values: map[string]interface{}{
-	// 		"data": string(json),
-	// 	},
-	// }).Result()
+	json, err := json.Marshal(krDayCandles)
+	if err != nil {
+		return
+	}
+	_, err = r.Client.XAdd(r.RedisCtx, &redis.XAddArgs{
+		Stream: "krDayCandleStream",
+		Values: map[string]interface{}{
+			"data": string(json),
+		},
+	}).Result()
 
-	// if err != nil {
-	// 	fmt.Printf("Redis Stream Push Error: %v\n", err)
-	// 	return
-	// }
+	if err != nil {
+		fmt.Printf("Redis Stream Push Error: %v\n", err)
+		return
+	}
 }

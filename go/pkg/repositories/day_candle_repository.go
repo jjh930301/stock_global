@@ -3,8 +3,8 @@ package repositories
 import (
 	"fmt"
 
-	"github.com/jjh930301/needsss_global/pkg/db"
-	"github.com/jjh930301/needsss_global/pkg/models"
+	"github.com/jjh930301/stock_global/pkg/db"
+	"github.com/jjh930301/stock_global/pkg/models"
 	"gorm.io/gorm/clause"
 )
 

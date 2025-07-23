@@ -6,21 +6,22 @@ import (
 	"os"
 	"strings"
 
-	tickerDto "github.com/jjh930301/needsss_global/pkg/api/ticker/dto"
-	"github.com/jjh930301/needsss_global/pkg/models"
-	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	tickerDto "github.com/jjh930301/stock_global/pkg/api/ticker/dto"
+	"github.com/jjh930301/stock_global/pkg/models"
+	"github.com/jjh930301/stock_global/pkg/repositories"
+	"github.com/jjh930301/stock_global/pkg/utils"
 	"github.com/shopspring/decimal"
 )
 
 const size = 100
 
-func GetTicker(page int) (int, error) {
-	url := fmt.Sprintf(os.Getenv("TICKER_URL"), page, size)
+func GetTicker(market string, page int) (int, error) {
+	url := fmt.Sprintf(os.Getenv("TICKER_URL"), market, page, size)
 
 	client := utils.TorClient()
 	resp, err := client.Get(url)
 	if err != nil {
+		fmt.Println(err)
 		fmt.Println("cannot get ticker list")
 		return 0, err
 	}
