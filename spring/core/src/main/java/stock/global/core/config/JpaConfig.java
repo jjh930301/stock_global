@@ -18,30 +18,35 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import jakarta.persistence.EntityManagerFactory;
-import stock.global.core.constants.Constant;
+import lombok.extern.slf4j.Slf4j;
+import stock.global.core.constants.DB;
 
 @Configuration
 @EnableJpaRepositories(
-    entityManagerFactoryRef = Constant.ENTITY_MANAGER_FACTORY, 
-    transactionManagerRef = Constant.JPA_TX_MANAGER,
-    basePackages={"stock.global.api.repositories"}
+    entityManagerFactoryRef = DB.ENTITY_MANAGER_FACTORY, 
+    transactionManagerRef = DB.JPA_TX_MANAGER,
+    basePackages={
+        "stock.global.api.repositories",
+        "stock.global.kiwoom.repository"
+    }
 )
+@Slf4j
 public class JpaConfig {
   
     @Primary
-    @Bean(name = Constant.APP_DATASOURCE)
+    @Bean(name = DB.APP_DATASOURCE)
     public HikariDataSource dataSource() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(Constant.DB_URI);
-        config.setUsername(Constant.DB_USER);
-        config.setPassword(Constant.DB_PASSWORD);
+        config.setJdbcUrl(DB.DB_URI);
+        config.setUsername(DB.DB_USER);
+        config.setPassword(DB.DB_PASSWORD);
         config.setMaximumPoolSize(5);
         config.setMinimumIdle(2);
-        config.setDriverClassName(Constant.DRIVE_CLASS);
+        config.setDriverClassName(DB.DRIVE_CLASS);
         return new HikariDataSource(config);
     }
 
-    @Bean(name = Constant.ENTITY_MANAGER_FACTORY)
+    @Bean(name = DB.ENTITY_MANAGER_FACTORY)
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
       JpaVendorAdapter jpaVendorAdapter
     ) {
@@ -52,21 +57,24 @@ public class JpaConfig {
 		em.setJpaVendorAdapter(vendorAdapter);
 		em.setPackagesToScan("stock.global.core.entities");
         Map<String,Object> jpaProperties = new HashMap<>();
+        jpaProperties.put("hibernate.format_sql", true);
         jpaProperties.put("hibernate.show_sql", true);
-        if(Constant.DRIVE_CLASS.equals("org.h2.Driver")) {
-            jpaProperties.put("hibernate.format_sql", true);
+        if(DB.DRIVE_CLASS.equals("org.h2.Driver")) {
             jpaProperties.put("hibernate.generate-ddl", true);
             jpaProperties.put("hibernate.hbm2ddl.auto", "create-drop");
             jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect"); 
+        } else {
+            jpaProperties.put("hibernate.hbm2ddl.auto", "update");
         }
+        log.info("jpaProperties {}" , jpaProperties);
         em.setJpaPropertyMap(jpaProperties);
 		em.setJpaVendorAdapter(jpaVendorAdapter);
 		return em;
     }
 
-    @Bean(name = Constant.JPA_TX_MANAGER)
+    @Bean(name = DB.JPA_TX_MANAGER)
     public PlatformTransactionManager transactionManager(
-      	@Qualifier(Constant.ENTITY_MANAGER_FACTORY) EntityManagerFactory entityManagerFactory
+      	@Qualifier(DB.ENTITY_MANAGER_FACTORY) EntityManagerFactory entityManagerFactory
     ) {
         return new JpaTransactionManager(entityManagerFactory);
     }

@@ -1,0 +1,15 @@
+FROM gradle:8.12-jdk21
+
+WORKDIR /kiwoomapp
+
+COPY kiwoom /kiwoomapp/kiwoom
+COPY core /kiwoomapp/core
+COPY build.gradle /kiwoomapp/
+COPY settings.gradle /kiwoomapp/
+
+ENV GRADLE_USER_HOME=/kiwoomapp/.gradle
+
+RUN gradle dependencies --no-daemon || true
+
+EXPOSE 8110
+ENTRYPOINT ["sh", "-c", "(gradle kiwoom:build -x test --continuous) & gradle kiwoom:bootRun -Dspring.profiles.active=dev"]

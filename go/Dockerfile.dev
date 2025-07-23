@@ -1,0 +1,32 @@
+FROM golang:1.20-alpine
+
+ENV PROJECT_DIR=/app \
+    GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOPRIVATE=github.com/jjh930301 
+
+ARG GITACCOUNT
+ARG GITTOKEN
+
+WORKDIR /app
+
+RUN mkdir "/build"
+
+COPY . .
+RUN apk add --no-cache git tor
+
+RUN apk update && apk add --no-cache tor \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/main
+
+# # private repo config
+# RUN go get github.com/githubnemo/CompileDaemon
+RUN go install github.com/githubnemo/CompileDaemon@latest
+
+RUN echo "SOCKSPort 0.0.0.0:9050" > /etc/tor/torrc && \
+    echo "ControlPort 0.0.0.0:9051" >> /etc/tor/torrc && \
+    echo "CookieAuthentication 0" >> /etc/tor/torrc && \
+    echo "KeepalivePeriod 10" >> /etc/tor/torrc && \
+    echo "NewCircuitPeriod 60" >> /etc/tor/torrc && \
+    echo "MaxCircuitDirtiness 300" >> /etc/tor/torrc
+
+ENTRYPOINT sh -c "tor & sleep 10 && CompileDaemon -build='go build -o /build/app ./cmd' -command='/build/app'"

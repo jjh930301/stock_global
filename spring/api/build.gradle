@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.4'
+	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.6'
 }
 
@@ -9,6 +9,11 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     sourceCompatibility = '21'
+}
+
+bootJar {
+    archiveFileName = 'api.jar'
+    launchScript()
 }
 
 configurations {
@@ -24,14 +29,14 @@ repositories {
 dependencies {
 	implementation project(":core")
 	testImplementation project(":core")
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
 
-// bootRun() {
-// 	String activeProfile = System.properties['spring.profiles.active']
-//     systemProperty "spring.profiles.active", activeProfile
-// 	mainClass = "stock.global.api.ApiApplication"
-// }
+bootRun() {
+	systemProperty "spring.profiles.active", project.findProperty("spring.profiles.active") ?: "dev"
+    mainClass = "stock.global.api.ApiApplication"
+}

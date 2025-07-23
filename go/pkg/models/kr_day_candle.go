@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/jjh930301/needsss_global/pkg/constant"
+	"github.com/jjh930301/stock_global/pkg/constant"
 	"github.com/shopspring/decimal"
 )
 
@@ -16,7 +16,6 @@ type KrDayCandle struct {
 	Low      decimal.Decimal `gorm:"column:low;type:decimal(11,3)" json:"low,omitempty"`
 	Close    decimal.Decimal `gorm:"column:close;type:decimal(11,3)" json:"close,omitempty"`
 	Volume   int64           `gorm:"column:volume;type:bigint;not null" json:"volume,omitempty"`
-	Percent  float32         `gorm:"column:percent;type:float;not null" json:"percent,omitempty"`
 }
 
 func (KrDayCandle) TableName() string {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	tickerservice "github.com/jjh930301/needsss_global/pkg/api/ticker/service"
-	"github.com/jjh930301/needsss_global/pkg/models/res"
-	"github.com/jjh930301/needsss_global/pkg/structs"
+	tickerservice "github.com/jjh930301/stock_global/pkg/api/ticker/service"
+	"github.com/jjh930301/stock_global/pkg/models/res"
+	"github.com/jjh930301/stock_global/pkg/structs"
 )
 
 // @Tags ticker

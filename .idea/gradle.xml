@@ -11,6 +11,8 @@
             <option value="$PROJECT_DIR$/spring" />
             <option value="$PROJECT_DIR$/spring/api" />
             <option value="$PROJECT_DIR$/spring/core" />
+            <option value="$PROJECT_DIR$/spring/kiwoom" />
+            <option value="$PROJECT_DIR$/spring/ws" />
           </set>
         </option>
       </GradleProjectSettings>

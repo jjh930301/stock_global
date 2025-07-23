@@ -4,7 +4,7 @@ type KrTicker struct {
 	Symbol    string `json:"ISU_SRT_CD"` // symbol
 	Name      string `json:"ISU_ABBRV"`  // name
 	Market    string `json:"MKT_NM"`     // market
-	MarketCap string `json:"LIST_SHRS"`  // marketCap
+	MarketCap string `json:"MKTCAP"`     // marketCap
 }
 
 type KrTickerResponse struct {

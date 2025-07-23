@@ -2,9 +2,9 @@ package daycandle
 
 import (
 	"github.com/gin-gonic/gin"
-	daycandleservice "github.com/jjh930301/needsss_global/pkg/api/daycandle/service"
-	"github.com/jjh930301/needsss_global/pkg/models/res"
-	"github.com/jjh930301/needsss_global/pkg/structs"
+	dayCandleService "github.com/jjh930301/stock_global/pkg/api/daycandle/service"
+	"github.com/jjh930301/stock_global/pkg/models/res"
+	"github.com/jjh930301/stock_global/pkg/structs"
 )
 
 // @Tags dayCandle
@@ -19,7 +19,7 @@ func GetDayCandle(c *gin.Context) {
 	if !verifyErr {
 		return
 	}
-	result := daycandleservice.GetDayCandle(-300)
+	result := dayCandleService.GetDayCandle(-300)
 	res.Ok(
 		c,
 		"message",

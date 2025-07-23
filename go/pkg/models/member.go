@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/jjh930301/needsss_global/pkg/constant"
-	"github.com/jjh930301/needsss_global/pkg/enum"
+	"github.com/jjh930301/stock_global/pkg/constant"
+	"github.com/jjh930301/stock_global/pkg/enum"
 	"gorm.io/gorm"
 )
 

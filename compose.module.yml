@@ -1,9 +1,9 @@
-version: "3"
+version: "3.8"
 services:
   gocron:
     build:
       context: "./go"
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       args:
         - GITACCOUNT=${GIT_ACCOUNT}
         - GITTOKEN=${GIT_TOKEN}
@@ -11,29 +11,61 @@ services:
     restart: always
     ports:
       - 8000:8000
-    deploy:
-      resources:
-        limits:
-          cpus: "1.5"
-          memory: "512M"
-        reservations:
-          cpus: "0.5"
-          memory: "256M"
     env_file:
       - ./.env
     volumes:
       - ./go:/app
       - /tmp/mysqld:/run/mysqld
-  springapi:
+    networks:
+      - global
+  api:
     build:
       context: "./spring"
-      dockerfile: Dockerfile.dev
-    container_name: springapi
+      dockerfile: Dockerfile.api.dev
+    container_name: api
     restart: always
     ports:
       - 8090:8090
     env_file:
       - ./.env
     volumes:
-      - "./spring:/app"
-      - "./spring/build:/app/build"
+      - "./spring/api:/app/api"
+      - "/api/api_gradle" # Gradle cache
+      - "./spring/api/.gradle:/app/api/.gradle"
+    networks:
+      - global
+  # kiwwom:
+  #   build:
+  #     context: "./spring"
+  #     dockerfile: Dockerfile.kiwoom.dev
+  #   container_name: kiwoom
+  #   restart: always
+  #   ports:
+  #     - 8110:8110
+  #   env_file:
+  #     - ./.env
+  #   volumes:
+  #     - "./spring/kiwoom:/app/kiwoom"
+  #     - "/kiwoom/kiwoom_gradle" # Gradle cache
+  #     - "./spring/kiwoom/.gradle:/app/kiwoom/.gradle"
+  #   networks:
+  #     - global
+  # ws:
+  #   build:
+  #     context: "./spring"
+  #     dockerfile: Dockerfile.ws.dev
+  #   container_name: ws
+  #   restart: always
+  #   ports:
+  #     - 8100:8100
+  #   env_file:
+  #     - ./.env
+  #   volumes:
+  #     - "./spring/ws:/wsapp/ws"
+  #     - "/ws/ws_gradle" # Gradle cache
+  #     - "./spring/ws/.gradle:/wsapp/ws/.gradle"
+  #   networks:
+  #     - global
+networks:
+  global:
+    external: true

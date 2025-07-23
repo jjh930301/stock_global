@@ -78,6 +78,27 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/ticker/daycandle/kr/index": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "insert index daycandles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dayCandle"
+                ],
+                "summary": "index day candles",
+                "responses": {}
+            }
+        },
         "/ticker/kr": {
             "get": {
                 "security": [

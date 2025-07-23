@@ -5,7 +5,7 @@ import (
 	"os"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/jjh930301/needsss_global/pkg/structs"
+	"github.com/jjh930301/stock_global/pkg/structs"
 )
 
 func Verification(tokenString string, claims *structs.AuthClaim) (*jwt.Token, error) {

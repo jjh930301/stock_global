@@ -1,4 +1,4 @@
-package daycandleservice
+package dayCandleService
 
 import (
 	"encoding/json"
@@ -9,9 +9,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jjh930301/needsss_global/pkg/models"
-	"github.com/jjh930301/needsss_global/pkg/repositories"
-	"github.com/jjh930301/needsss_global/pkg/utils"
+	"github.com/jjh930301/stock_global/pkg/models"
+	r "github.com/jjh930301/stock_global/pkg/redis"
+	"github.com/jjh930301/stock_global/pkg/repositories"
+	"github.com/jjh930301/stock_global/pkg/utils"
+	"github.com/redis/go-redis/v9"
 	"github.com/shopspring/decimal"
 )
 
@@ -22,7 +24,6 @@ const (
 	LOW    = 3
 	CLOSE  = 4
 	VOLUME = 5
-	PER    = 6
 )
 
 func GetKrDayCandle(before int) bool {
@@ -64,14 +65,15 @@ func FetchKrCandle(symbol, startTime, endTime string) {
 	res, err := client.Get(url)
 
 	if err != nil {
-		fmt.Println(err)
+		go FetchKrCandle(symbol, startTime, endTime)
 		return
 	}
+
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
+		go FetchKrCandle(symbol, startTime, endTime)
 		return
 	}
 
@@ -79,31 +81,67 @@ func FetchKrCandle(symbol, startTime, endTime string) {
 	replaceNewLine := strings.ReplaceAll(replaceTap, "\n", "")
 	replaceSpace := strings.ReplaceAll(replaceNewLine, " ", "")
 	stringify := strings.ReplaceAll(replaceSpace, "'", "\"")
+
 	var arr [][]interface{}
-	_ = json.Unmarshal([]byte(stringify), &arr)
+	err = json.Unmarshal([]byte(stringify), &arr)
+	if err != nil {
+		go FetchKrCandle(symbol, startTime, endTime)
+		return
+	}
 	var krDayCandles []models.KrDayCandle
 	for i, candle := range arr {
 		if i == 0 {
 			continue
 		}
 		datetime, _ := time.Parse("20060102", candle[DATE].(string))
-		open := decimal.NewFromFloat(candle[OPEN].(float64))
-		high := decimal.NewFromFloat(candle[HIGH].(float64))
-		low := decimal.NewFromFloat(candle[LOW].(float64))
+		var open decimal.Decimal
+		var high decimal.Decimal
+		var low decimal.Decimal
 		close := decimal.NewFromFloat(candle[CLOSE].(float64))
-		per, _ := candle[PER].(float32)
-		krDayCandle := models.KrDayCandle{
-			Symbol:  symbol,
-			Date:    datetime,
-			Open:    open,
-			High:    high,
-			Low:     low,
-			Close:   close,
-			Volume:  int64(candle[VOLUME].(float64)),
-			Percent: per,
+		if int(candle[OPEN].(float64)) == 0 {
+			open = decimal.NewFromFloat(candle[CLOSE].(float64))
+		} else {
+			open = decimal.NewFromFloat(candle[OPEN].(float64))
 		}
 
+		if int(candle[LOW].(float64)) == 0 {
+			low = decimal.NewFromFloat(candle[CLOSE].(float64))
+		} else {
+			low = decimal.NewFromFloat(candle[LOW].(float64))
+		}
+
+		if int(candle[HIGH].(float64)) == 0 {
+			high = decimal.NewFromFloat(candle[CLOSE].(float64))
+		} else {
+			high = decimal.NewFromFloat(candle[HIGH].(float64))
+		}
+
+		krDayCandle := models.KrDayCandle{
+			Symbol: symbol,
+			Date:   datetime,
+			Open:   open,
+			High:   high,
+			Low:    low,
+			Close:  close,
+			Volume: int64(candle[VOLUME].(float64)),
+		}
 		krDayCandles = append(krDayCandles, krDayCandle)
 	}
 	_ = repositories.KrDayCandleRepository{}.BulkDuplicatKeyInsert(krDayCandles)
+	// redis stream
+	json, err := json.Marshal(krDayCandles)
+	if err != nil {
+		return
+	}
+	_, err = r.Client.XAdd(r.RedisCtx, &redis.XAddArgs{
+		Stream: "krDayCandleStream",
+		Values: map[string]interface{}{
+			"data": string(json),
+		},
+	}).Result()
+
+	if err != nil {
+		fmt.Printf("Redis Stream Push Error: %v\n", err)
+		return
+	}
 }

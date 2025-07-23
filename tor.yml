@@ -1,0 +1,38 @@
+# docker network create --driver overlay --attachable global
+# docker swarm init
+# docker stack deploy -c tor.yml tor
+# docker stack rm tor
+# docker stack services tor
+# docker service scale tor_tor=5
+services:
+  tor:
+    image: dperson/torproxy
+    deploy:
+      mode: replicated
+      replicas: 40
+      resources:
+        limits:
+          cpus: "1"
+          memory: 64m
+      restart_policy:
+        condition: any
+    ports:
+      - target: 9050
+        published: 9050
+        protocol: tcp
+        mode: ingress
+      - target: 9051
+        published: 9051
+        protocol: tcp
+        mode: ingress
+      - target: 5353
+        published: 5353
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - ./tor/torrc:/etc/tor/torrc
+    networks:
+      - global
+networks:
+  global:
+    external: true

@@ -10,9 +10,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 @EntityListeners(value = {AuditingEntityListener.class})
 @MappedSuperclass
+@SuperBuilder
 @Getter
 public class BaseEntity {
 
@@ -23,4 +25,11 @@ public class BaseEntity {
     @LastModifiedDate
     @Column(name="updated_at")
     protected LocalDateTime updatedAt;
+    
+    public BaseEntity(){}
+
+    public BaseEntity(LocalDateTime createdAt , LocalDateTime updatedAt) {
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 }

@@ -1,4 +1,4 @@
-module github.com/jjh930301/needsss_global
+module github.com/jjh930301/stock_global
 
 go 1.20
 
@@ -10,7 +10,15 @@ require (
 	gorm.io/gorm v1.25.12
 )
 
-require github.com/dgrijalva/jwt-go v3.2.0+incompatible
+require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/redis/go-redis/v9 v9.7.0
+)
+
+require (
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+)
 
 require (
 	github.com/go-co-op/gocron v1.37.0

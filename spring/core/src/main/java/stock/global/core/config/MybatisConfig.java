@@ -14,19 +14,19 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.zaxxer.hikari.HikariDataSource;
 
-import stock.global.core.constants.Constant;
+import stock.global.core.constants.DB;
 
 @Configuration
 @EnableTransactionManagement
 @MapperScan(
     basePackages = {"stock.global.api.dao"},
-    sqlSessionFactoryRef = Constant.MYBATIS_SESSION_FACTORY
+    sqlSessionFactoryRef = DB.MYBATIS_SESSION_FACTORY
 )
 public class MybatisConfig {
 
-    @Bean(name = Constant.MYBATIS_SESSION_FACTORY)
+    @Bean(name = DB.MYBATIS_SESSION_FACTORY)
     public SqlSessionFactory sqlSessionFactory(
-        @Qualifier(Constant.APP_DATASOURCE) HikariDataSource dataSource
+        @Qualifier(DB.APP_DATASOURCE) HikariDataSource dataSource
     ) throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource);
@@ -39,14 +39,14 @@ public class MybatisConfig {
 
     @Bean(name = "MybatisSqlTemplate")
     public SqlSessionTemplate sqlSessionTemplate(
-        @Qualifier(Constant.MYBATIS_SESSION_FACTORY) SqlSessionFactory sqlSessionFactory
+        @Qualifier(DB.MYBATIS_SESSION_FACTORY) SqlSessionFactory sqlSessionFactory
     ) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 
     @Bean(name = "MybatisTransactionManager")
     public PlatformTransactionManager txManager(
-        @Qualifier(Constant.APP_DATASOURCE) HikariDataSource datasource
+        @Qualifier(DB.APP_DATASOURCE) HikariDataSource datasource
     ) {
         return new DataSourceTransactionManager(datasource);
     }

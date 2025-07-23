@@ -1,5 +1,22 @@
-version: "3"
+# docker network create --driver overlay --attachable global
 services:
+  postgres:
+    image: timescale/timescaledb:latest-pg17
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: global
+      POSTGRES_USER: jjh
+      POSTGRES_PASSWORD: password
+      PGMAXCONNECTIONS: 1000
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   stock:
     platform: linux/amd64 # m1
     image: "mysql:8.0.33"
@@ -20,45 +37,8 @@ services:
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  tor1:
-    image: dperson/torproxy
-    container_name: tor1
-    ports:
-      - "9050:9050"
-      - "9051:9051"
-      - "5353:5353"
-    volumes:
-      - ./tor/torrc:/etc/tor/torrc
-    deploy:
-      resources:
-        limits:
-          memory: 128m
-          cpus: "0.25"
-    restart: always
-  tor2:
-    image: dperson/torproxy
-    container_name: tor2
-    ports:
-      - "9052:9050"
-      - "9053:9051"
-      - "5354:5353"
-    volumes:
-      - ./tor/torrc:/etc/tor/torrc
-  tor3:
-    image: dperson/torproxy
-    container_name: tor3
-    ports:
-      - "9054:9050"
-      - "9055:9051"
-      - "5355:5353"
-    volumes:
-      - ./tor/torrc:/etc/tor/torrc
-    deploy:
-      resources:
-        limits:
-          memory: 128m
-          cpus: "0.25"
-    restart: always
+    networks:
+      - global
   redis-master:
     image: redis:7-alpine
     container_name: redis-master
@@ -66,7 +46,14 @@ services:
       - "6379:6379"
     volumes:
       - ./redis/master.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf
+      - ./redis/entrypoint.sh:/usr/local/entrypoint.sh
+    entrypoint: [sh, "/usr/local/entrypoint.sh"]
+    depends_on:
+      - redis-node1
+      - redis-node2
+    networks:
+      - global
+
   redis-node1:
     image: redis:7-alpine
     container_name: redis-node1
@@ -74,7 +61,9 @@ services:
       - "6380:6379"
     volumes:
       - ./redis/node.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - global
 
   redis-node2:
     image: redis:7-alpine
@@ -83,31 +72,9 @@ services:
       - "6381:6379"
     volumes:
       - ./redis/node.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
-
-  sentinel1:
-    image: redis:7-alpine
-    container_name: sentinel1
-    ports:
-      - "26379:26379"
-    volumes:
-      - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
-    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
-
-  sentinel2:
-    image: redis:7-alpine
-    container_name: sentinel2
-    ports:
-      - "26380:26379"
-    volumes:
-      - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
-    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
-
-  sentinel3:
-    image: redis:7-alpine
-    container_name: sentinel3
-    ports:
-      - "26381:26379"
-    volumes:
-      - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
-    command: redis-server /usr/local/etc/redis/sentinel.conf --sentinel
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - global
+networks:
+  global:
+    external: true
