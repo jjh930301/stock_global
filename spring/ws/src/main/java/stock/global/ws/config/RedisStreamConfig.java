@@ -56,10 +56,9 @@ public class RedisStreamConfig {
         String streamKey = Constant.KR_INDEX_DAY_CANDLE_STREAM;
         byte[] streamKeyBytes = streamKey.getBytes();
     
-        // ✅ 먼저 스트림이 존재하는지 확인
+        // 스트림이 존재하는지 확인
         if (!redisTemplate.hasKey(streamKey)) {
             log.info("Stream '{}' does not exist. Creating a new stream...", streamKey);
-    
             // 스트림이 없으면 빈 메시지 추가하여 생성
             redisTemplate.opsForStream().add(streamKey, Collections.singletonMap("init", "1"));
         }

@@ -1,5 +1,8 @@
 /mysql/data
+/postgres/data
 *.yaml
 .env
 *.sql
 /redis/*
+*.sh
+deploy.yml

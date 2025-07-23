@@ -17,7 +17,7 @@ import stock.global.api.domain.auth.dto.MemberResponseDto;
 import stock.global.api.domain.auth.dto.PermitAccountDto;
 import stock.global.api.repositories.MemberHistoryRepository;
 import stock.global.api.repositories.MemberRepository;
-import stock.global.core.constants.Constant;
+import stock.global.core.constants.DB;
 import stock.global.core.entities.Member;
 import stock.global.core.entities.MemberHistory;
 import stock.global.core.entities.MemberHistoryId;
@@ -55,7 +55,7 @@ public class AuthService {
         this.stringUtil = stringUtil;
     }
 
-    @Transactional(transactionManager = Constant.JPA_TX_MANAGER)
+    @Transactional(transactionManager = DB.JPA_TX_MANAGER)
     public ApiRes<MemberResponseDto> loginMember(MemberDto dto , String ip) {
         final Member member = this.memberRepository
             .findByAccountId(dto.getAccountId())

@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
+import stock.global.core.config.JpaConfig;
 import stock.global.core.config.RedisConfig;
 import stock.global.core.config.SecurityConfig;
 import stock.global.core.config.TokenInterceptor;
@@ -17,7 +18,8 @@ import stock.global.core.util.JwtUtil;
 	TokenInterceptor.class,
 	RedisConfig.class,
 	SecurityConfig.class,
-	JwtUtil.class
+	JwtUtil.class,
+	JpaConfig.class
 })
 @SpringBootApplication
 public class WsApplication {

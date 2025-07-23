@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api/spring.api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/api/spring.api.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/spring.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/spring.core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api/spring.api.iml" filepath="$PROJECT_DIR$/.idea/modules/api/spring.api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api/spring.api.test.iml" filepath="$PROJECT_DIR$/.idea/modules/api/spring.api.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/spring.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/spring.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/spring.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/spring.core.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api/stock.api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/api/stock.api.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/stock.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/stock.core.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/stock_global.iml" filepath="$PROJECT_DIR$/.idea/stock_global.iml" />
     </modules>
   </component>

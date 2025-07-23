@@ -11,6 +11,11 @@ java {
     sourceCompatibility = '21'
 }
 
+bootJar {
+    archiveFileName = 'api.jar'
+    launchScript()
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor

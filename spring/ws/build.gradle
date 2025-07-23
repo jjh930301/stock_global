@@ -11,6 +11,11 @@ java {
     sourceCompatibility = '21'
 }
 
+bootJar {
+    archiveFileName = 'ws.jar'
+    launchScript()
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
